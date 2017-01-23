@@ -33,6 +33,7 @@ class User(Base):
 Base.metadata.create_all(engine)
 
 
+
 u = User('Rusya', 'Sadboy', 'login', 'password', 'email', '12373897')
 db_session.add(u)
 db_session.commit()
