@@ -7,13 +7,23 @@ from provider.entities import db
 
 app = Flask(__name__)
 
+
 @app.route("/signup/", methods = ['POST', 'GET'])
 def index():
     error = None
     if request.method == 'POST':
+
         return request.form['login']
     return render_template("index.html")
 
+
+@app.route("/showusers", methods=['GET'])
+def all_users():
+    users = db.session.query(User).all()
+    suser = ''
+    for u in users:
+        suser += u.to_string() + "\n"
+    return suser
 
 if __name__ == '__main__':
 
@@ -33,5 +43,7 @@ if __name__ == '__main__':
     # except:
     #     db.session.rollback()
 
-    print(User.query.get(2).username)
+    # users = db.session.query(User).all()
+    # for u in users:
+    #     print(u.to_string())
     app.run()
