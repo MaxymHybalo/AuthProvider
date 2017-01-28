@@ -1,29 +1,37 @@
-from flask import Flask
-from flask import render_template
-from flask import request
+from flask import Flask, render_template, make_response, jsonify
 from provider.entities import User
 from provider.database import db_session, init_db
-
+from flask_httpauth import HTTPBasicAuth
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
 
 
-@app.route("/signup/", methods=['POST', 'GET'])
+@app.route("/user/", methods=['POST'])
 def index():
-    error = None
     if request.method == 'POST':
-        return str(signup_user(request.form))
-    return render_template("index.html")
+        return str(signup_user(request.form))  # update method which work with json data form
+    return make_response("Pass", 200)
 
 
-@app.route("/showusers", methods=['GET'])
-def all_users():
+@app.route("/test/api/", methods=['GET'])
+@auth.login_required
+def test():
+    return jsonify({"submited": "all work's fine!"})
+
+
+@auth.get_password
+def get_password(login):
     init_db()
-    users = User.query.all()
-    all_users = ''
-    for u in users:
-        all_users += u.to_string() + "\n"
-    return all_users
+    user = User.query.filter(User.login == login).first()
+    if user:
+        return user.password
+    return None
+
+
+@auth.error_handler
+def auth_error():
+    return make_response(jsonify({'error': 'Unauthorized error'}))
 
 
 @app.teardown_appcontext
@@ -54,14 +62,5 @@ if __name__ == '__main__':
 
     app.debug = True
     app.secret_key = 'development'
-    # init_db()
-    # Hot to write to database
-    # try:
-    #     u = User(login="another", first_name="Max")
-    #     db_session.add(u)
-    #     db_session.commit()
-    #     print("Writed")
-    # except:
-    #     db_session.rollback()
     app.run()
 
