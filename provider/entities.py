@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer, \
-    ForeignKey, Boolean, Text
+    ForeignKey, Boolean, Text, DateTime
 from provider.database import Base
 
 
@@ -24,7 +24,7 @@ class User(Base):
                "\n\tlast_name: " + self.last_name +\
                "\n\temail: " + self.email +\
                "\n\tphone: " + self.phone +\
-               "\n}"  # to simplify user data output
+               "\n}"  # For simplify user data output
 
 
 class Client(Base):
@@ -32,9 +32,7 @@ class Client(Base):
     __tablename__ = 'clients'
     # Readable client name
     name = Column(String(30))
-
     description = Column(String(300))
-
     user_id = Column(ForeignKey('user.id'))
     user = relationship('User')
     client_id = Column(String(40), primary_key=True)
@@ -66,6 +64,54 @@ class Client(Base):
         if self._default_scopes:
             return self._default_scopes.split()
         return []
+
+    # @property
+    # def allowed_grant_types(self):
+
+
+class Grant(Base):
+
+    __tablename__ = 'grants'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id',ondelete='CASCADE'))
+    user = relationship('User')
+    client_id = Column(String(40), ForeignKey('client.client_id'))
+    client = relationship('Client')
+    code = Column(String(255), index=True, nullable=False)
+    redirect_uri = Column(String(255))
+    expires = Column(DateTime)
+    _scopes = Column(Text)
+    # def delete(self): TODO implement method
+
+    @property
+    def scopes(self):
+        if self._scopes:
+            return self._scopes.split()
+        return []
+
+
+class Token(Base):
+
+    __tablename__ = 'tokens'
+    id = Column(Integer, primary_key=True)
+    client_id = Column(String(40), ForeignKey('client.client_id'))
+    client = relationship('Client')
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship('User')
+    token_type = Column(String(40))  # Only bearer support
+    access_token = Column(String(255), unique=True)
+    refresh_token = Column(String(255), unique=True)
+    expires = Column(DateTime)
+    _scopes = Column(Text)
+    # TODO implement delete method
+
+    @property
+    def scopes(self):
+        if self._scopes:
+            return self._scopes.split()
+        return []
+
+
 
 
 
