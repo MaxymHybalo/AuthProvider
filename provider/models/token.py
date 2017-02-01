@@ -18,6 +18,7 @@ class Token(Base):
     _scopes = Column(Text)
     # TODO implement delete method
 
+
     @property
     def scopes(self):
         if self._scopes:
