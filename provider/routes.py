@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import request
-from provider.entities import User
+from provider.models.user import User
 from provider.database import db_session, init_db
 
 

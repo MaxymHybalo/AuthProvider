@@ -1,5 +1,5 @@
 from flask import Flask, render_template, make_response, jsonify
-from provider.entities import User
+from provider.models.user import User
 from provider.database import db_session, init_db
 from flask_httpauth import HTTPBasicAuth
 
