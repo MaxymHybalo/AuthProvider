@@ -1,10 +1,22 @@
-from flask import Flask, render_template, make_response, jsonify
-from provider.models.user import User
+from flask import Flask, render_template, make_response, jsonify, request
+from flask_cors import CORS
+from provider.models.user import User, check_user
 from provider.database import db_session, init_db
-from flask_httpauth import HTTPBasicAuth
+import jwt
 
 app = Flask(__name__)
-auth = HTTPBasicAuth()
+CORS(app)
+
+
+@app.route("/auth/", methods=['POST'])
+def authenticate():
+    login = request.json.get('username')
+    password = request.json.get('password')
+    if check_user(login, password):
+            # TODO add expire
+            token = jwt.encode({'login': login, 'password': password}, key='key', algorithm='HS256')
+            return jsonify({'access_token': str(token)})
+    return jsonify({'error': 'User credentials wrong'})
 
 
 @app.route("/user/", methods=['POST'])
@@ -15,23 +27,8 @@ def index():
 
 
 @app.route("/test/api/", methods=['GET'])
-@auth.login_required
 def test():
     return jsonify({"submited": "all work's fine!"})
-
-
-@auth.get_password
-def get_password(login):
-    init_db()
-    user = User.query.filter(User.login == login).first()
-    if user:
-        return user.password
-    return None
-
-
-@auth.error_handler
-def auth_error():
-    return make_response(jsonify({'error': 'Unauthorized error'}))
 
 
 @app.teardown_appcontext

@@ -3,6 +3,7 @@ from sqlalchemy import Column, String, Integer, \
 from sqlalchemy.orm import relationship
 from provider.database import Base
 
+
 class User(Base):
 
     __tablename__ = "users"
@@ -25,3 +26,12 @@ class User(Base):
                "\n\temail: " + self.email + \
                "\n\tphone: " + self.phone + \
                "\n}"  # For simplify user data output
+
+
+def check_user(login, password):
+    from provider.database import db_session, init_db
+    init_db()
+    user = User.query.filter(User.login == login).first()
+    if user and user.password == password:
+            return True
+    return False

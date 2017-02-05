@@ -63,5 +63,5 @@ if __name__ == '__main__':
     #     print("Writed")
     # except:
     #     db_session.rollback()
-    app.run()
+    app.run(port=5000)
 
