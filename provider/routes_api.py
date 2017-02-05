@@ -1,8 +1,8 @@
 from flask import Flask, render_template, make_response, jsonify, request
 from flask_cors import CORS
-from provider.models.user import User, check_user
+from provider.models.user import User
 from provider.database import db_session, init_db
-import jwt
+
 
 app = Flask(__name__)
 CORS(app)
@@ -10,13 +10,11 @@ CORS(app)
 
 @app.route("/auth/", methods=['POST'])
 def authenticate():
+    from provider.models.user import generate_access_token
     login = request.json.get('username')
     password = request.json.get('password')
-    if check_user(login, password):
-            # TODO add expire
-            token = jwt.encode({'login': login, 'password': password}, key='key', algorithm='HS256')
-            return jsonify({'access_token': str(token)})
-    return jsonify({'error': 'User credentials wrong'})
+    token = generate_access_token(login, password)
+    return jsonify({'access_token': token})
 
 
 @app.route("/user/", methods=['POST'])

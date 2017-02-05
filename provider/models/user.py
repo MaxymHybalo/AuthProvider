@@ -16,6 +16,11 @@ class User(Base):
     email = Column(String(40), nullable=False)
     phone = Column(String(20))
 
+    def check_password(self,password):
+        if password and self.password == password:
+            return True
+        return False
+
     def to_string(self):
         return "{" \
                "\n\tid: " + str(self.id) + \
@@ -28,10 +33,18 @@ class User(Base):
                "\n}"  # For simplify user data output
 
 
-def check_user(login, password):
-    from provider.database import db_session, init_db
-    init_db()
-    user = User.query.filter(User.login == login).first()
-    if user and user.password == password:
-            return True
-    return False
+def generate_access_token(login,password):
+    from provider.database import init_db
+    import jwt
+    user = None
+    try:
+        init_db()
+        user = User.query.filter(User.login == login).first()
+    # TODO Handle exception
+    except:
+        db_session.rollback()
+    if user and user.check_password(password):
+        token = jwt.encode({'login': login, 'verified': True}, key='key', algorithm='HS256')
+        return str(token)
+    token = jwt.encode({'login': login, 'verified': False}, key='key', algorithm='HS256')
+    return str(token)
