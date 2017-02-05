@@ -16,7 +16,6 @@ class Token(Base):
     refresh_token = Column(String(255), unique=True)
     expires = Column(DateTime)
     _scopes = Column(Text)
-    # TODO implement delete method
 
     @property
     def scopes(self):

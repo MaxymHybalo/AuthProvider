@@ -15,7 +15,6 @@ class Grant(Base):
     redirect_uri = Column(String(255))
     expires = Column(DateTime)
     _scopes = Column(Text)
-    # def delete(self): TODO implement method
 
     @property
     def scopes(self):

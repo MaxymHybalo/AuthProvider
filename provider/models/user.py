@@ -45,6 +45,6 @@ def generate_access_token(login,password):
         db_session.rollback()
     if user and user.check_password(password):
         token = jwt.encode({'login': login, 'verified': True}, key='key', algorithm='HS256')
-        return str(token)
+        return token.decode('utf-8')
     token = jwt.encode({'login': login, 'verified': False}, key='key', algorithm='HS256')
-    return str(token)
+    return token.decode('utf-8')
