@@ -4,7 +4,6 @@ from flask import request
 from provider.database import init_db, db_session
 
 
-
 class User(Base):
 
     __tablename__ = "users"
@@ -37,7 +36,7 @@ class User(Base):
 def signup_user(json):
     if json:
         init_db()
-        if User.query.filter(User.login == json['login']).first():
+        if User.query.filter(User.login == json['username']).first():
             return False
         username = json['username']
         password = json['password']
@@ -45,7 +44,7 @@ def signup_user(json):
         phone = json['phone']
         first_name = json['firstName']
         last_name = json['lastName']
-        user = User(login=username, password=password, email=email, phone=phone,\
+        user = User(login=username, password=password, email=email, phone=phone,
                     first_name=first_name, last_name=last_name)
         try:
             db_session.add(user)
