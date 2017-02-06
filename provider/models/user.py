@@ -6,10 +6,9 @@ from provider.database import init_db, db_session
 
 
 class User(Base):
-
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    login = Column(String(20), unique=True, index=True,
+    login = Column(String(30), unique=True, index=True,
                    nullable=False)
     password = Column(String(30), nullable=False)
     first_name = Column(String(30), nullable=False)
@@ -35,6 +34,7 @@ class User(Base):
 
 
 def signup_user(json):
+    import re
     if json:
         init_db()
         if User.query.filter(User.login == json['login']).first():
@@ -45,14 +45,20 @@ def signup_user(json):
         phone = json['phone']
         first_name = json['firstName']
         last_name = json['lastName']
-        user = User(login=username, password=password, email=email, phone=phone,\
-                    first_name=first_name, last_name=last_name)
-        try:
-            db_session.add(user)
-            db_session.commit()
-        except:
-            db_session.rollback()
-        return True
+        if not (((len(username) and len(password) and len(first_name) and len(last_name)) <= 30) and (email <= 40 ) and (phone <= 20)):
+            return False
+        if (re.findall(r'\W', username, password, first_name, last_name, email, phone) and re.findall(r'\D', phone) \
+                    and not re.match(r'[+]', phone) and not re.search(r'[@]', email)):
+            return False
+        else:
+            user = User(login=username, password=password, email=email, phone=phone,\
+                        first_name=first_name, last_name=last_name)
+            try:
+                db_session.add(user)
+                db_session.commit()
+            except:
+                db_session.rollback()
+            return True
 
 
 def generate_access_token(login, password):
