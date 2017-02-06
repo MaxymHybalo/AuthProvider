@@ -11,7 +11,7 @@ def token_expected(f):
             data = get_token_data(token)
         if data['verified']:
             return f(*args, verified=data['verified'], login=data['login'])
-        return f(*args, verified=data['verified'], endpoint=None)
+        return f(*args, verified=data['verified'])
     return foo
 
 

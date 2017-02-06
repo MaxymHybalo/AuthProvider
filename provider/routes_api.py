@@ -1,6 +1,6 @@
 from flask import Flask, make_response, jsonify, request
 from flask_cors import CORS
-from provider.models.user import signup_user, User
+from provider.models.user import signup_user, User,user_information
 from provider.database import db_session, init_db
 from provider.jwt_auth import token_expected
 
@@ -27,6 +27,11 @@ def authenticate():
     password = request.json.get('password')
     token = generate_access_token(login, password)
     return jsonify({'access_token': token})
+
+
+@app.route('/api/profile', methods=['GET'])
+def profile():
+    return user_information()
 
 
 @app.route("/test/api/", methods=['GET'])
