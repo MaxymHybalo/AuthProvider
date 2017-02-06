@@ -36,7 +36,6 @@ def signup_user(form):
         init_db()
         if User.query.filter(User.login == form['login']).first():
             return False
-
         user = User(login=form['login'],
                     password=form['password'],
                     first_name=form['first'],
