@@ -1,7 +1,7 @@
 from flask import Flask, make_response, jsonify, request
 from flask_cors import CORS
-from provider.models.user import User
-from provider.database import db_session, init_db
+from provider.models.user import signup_user
+from provider.database import db_session
 from provider.jwt_auth import token_expected
 
 
@@ -35,26 +35,6 @@ def test():
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
-
-
-def signup_user(form):
-    if form:
-        init_db()
-        if User.query.filter(User.login == form['login']).first():
-            return False
-        user = User(login=form['login'],
-                    password=form['password'],
-                    first_name=form['first'],
-                    last_name=form['last'],
-                    email=form['email'],
-                    phone=form['number'])
-        try:
-            db_session.add(user)
-            db_session.commit()
-        except:
-            db_session.rollback()
-        return True
-
 
 if __name__ == '__main__':
     app.debug = True

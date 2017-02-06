@@ -1,7 +1,8 @@
-from sqlalchemy import Column, String, Integer, \
-    ForeignKey, Boolean, Text, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, Integer
 from provider.database import Base
+from flask import request
+from provider.database import init_db, db_session
+
 
 
 class User(Base):
@@ -16,7 +17,7 @@ class User(Base):
     email = Column(String(40), nullable=False)
     phone = Column(String(20))
 
-    def check_password(self,password):
+    def check_password(self, password):
         if password and self.password == password:
             return True
         return False
@@ -33,8 +34,28 @@ class User(Base):
                "\n}"  # For simplify user data output
 
 
-def generate_access_token(login,password):
-    from provider.database import init_db
+def signup_user(json):
+    if json:
+        init_db()
+        if User.query.filter(User.login == json['login']).first():
+            return False
+        username = json['username']
+        password = json['password']
+        email = json['email']
+        phone = json['phone']
+        first_name = json['firstName']
+        last_name = json['lastName']
+        user = User(login=username, password=password, email=email, phone=phone,\
+                    first_name=first_name, last_name=last_name)
+        try:
+            db_session.add(user)
+            db_session.commit()
+        except:
+            db_session.rollback()
+        return True
+
+
+def generate_access_token(login, password):
     import jwt
     user = None
     try:
@@ -48,3 +69,5 @@ def generate_access_token(login,password):
         return token.decode('utf-8')
     token = jwt.encode({'login': login, 'verified': False}, key='key', algorithm='HS256')
     return token.decode('utf-8')
+
+
