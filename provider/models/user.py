@@ -1,11 +1,9 @@
 from sqlalchemy import Column, String, Integer
-from provider.database import Base
-from flask import request
-from provider.database import init_db, db_session
-
-
+from provider.database import init_db, db_session, Base
+from provider.jwt_auth import token_expected
 
 class User(Base):
+
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     login = Column(String(30), unique=True, index=True,
@@ -37,7 +35,7 @@ def signup_user(json):
     import re
     if json:
         init_db()
-        if User.query.filter(User.login == json['login']).first():
+        if User.query.filter(User.login == json['username']).first():
             return False
         username = json['username']
         password = json['password']
@@ -77,3 +75,20 @@ def generate_access_token(login, password):
     return token.decode('utf-8')
 
 
+@token_expected
+def user_information(**kwargs):
+    from flask import jsonify
+    response = jsonify({"message": False})
+    if kwargs['verified']:
+        try:
+            user = User.query.filter(User.login == kwargs['login']).first()
+            response = jsonify({
+                    'username': user.login,
+                    'firstName': user.first_name,
+                    'lastName': user.last_name,
+                    'phone': user.phone,
+                    'email': user.email
+                })
+        except:
+            db_session.remove()
+        return response
