@@ -3,15 +3,23 @@ import jwt
 
 
 def token_expected(f):
-    def wrapper(*args, **kwargs):
-        # TODO change to getting token from header
-        token = request.json.get('access_token')
-        print(token)
-        if token:
-            data = jwt.decode(token, 'key', algorithms=['HS256'])
-            if data['verified']:
-                print('Readed as bool')
-                # TODO *args **kwargs
-            return f(*args, **kwargs)
-    return wrapper
+    def foo(*args, **kwargs):
+        data = dict()
+        data['verified'] = False
+        if request.headers.get('Authorization'):
+            token = request.headers['Authorization'].split(' ')
+            data = get_token_data(token)
+        if data['verified']:
+            return f(*args, verified=data['verified'], login=data['login'])
+        return f(*args, verified=data['verified'], endpoint=None)
+    return foo
 
+
+def get_token_data(token):
+    data = dict()
+    if token:
+        try:
+            data = jwt.decode(token[1], 'key', algorithms=['HS256'])
+        except jwt.InvalidTokenError:
+            data['verified'] = False
+    return data
