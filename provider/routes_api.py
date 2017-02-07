@@ -27,8 +27,8 @@ def authenticate():
     password = request.json.get('password')
     token = generate_access_token(login, password)
     user = User.query.filter(User.login==login).first()
-    print('User id wrote in session')
     session['id'] = user.id
+    print('Session: %s', session)
     return jsonify({'access_token': token})
 
 
@@ -60,6 +60,12 @@ def all_users():
             all_users += u.to_string() + "\n"
         return all_users
     return foo()
+
+
+def session_user():
+    print('In session user call')
+    print(session)
+    return User.query.get(1)
 
 
 @app.teardown_appcontext

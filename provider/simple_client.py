@@ -18,8 +18,8 @@ remote = oauth.remote_app(
     request_token_params={'scope': 'email'},
     base_url='http://127.0.0.1:5001/api/',
     request_token_url=None,
-    access_token_url='http://127.0.0.1:5001/oauth/token',
-    authorize_url='http://127.0.0.1:5001/oauth/authorize'
+    access_token_url='http://ce02377d.ngrok.io/oauth/token',
+    authorize_url='http://ce02377d.ngrok.io/oauth/authorize'
 )
 
 

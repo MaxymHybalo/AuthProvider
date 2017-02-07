@@ -1,7 +1,7 @@
 from flask_oauthlib.provider import OAuth2Provider
 from _datetime import datetime, timedelta
-from flask import jsonify, request, render_template,session
-from provider.routes_api import app
+from flask import jsonify, request, render_template
+from provider.routes_api import app, session_user
 from provider.models.client import Client
 from provider.models.grant import Grant
 from provider.models.token import Token
@@ -87,7 +87,6 @@ def authorize(*args,**kwargs):
         client_id = kwargs['client_id']
         client = Client.query.filter(Client.client_id==client_id).first()
         kwargs['client'] = client
-        print(user.to_string())
         kwargs['user'] = user
         return render_template('authorize.html', **kwargs)
     confirm = request.form.get('confirm', 'no')
@@ -104,7 +103,7 @@ def me():
 
 @app.route('/client')
 def client():
-    user = current_user()
+    user = session_user()
     if not user:
         return jsonify(message=False)
     item = Client(
@@ -112,7 +111,8 @@ def client():
         client_secret='test_secret',  # code by get_salt
         _redirect_uris=' '.join([
             'http://localhost:8000/authorized',
-            'http://127.0.0.1:8000/authorized'
+            'http://127.0.0.1:8000/authorized',
+            'http://dc63510e.ngrok.io/authorized'
         ]),
         _default_scopes='email',
         user_id=user.id
@@ -121,11 +121,6 @@ def client():
     db_session.add(item)
     db_session.commit()
     return jsonify(client_id=item.client_id, client_secret=item.client_secret)
-
-
-def session_user():
-    print('In session user call')
-    return User.query.get(1)
 
 
 @token_expected
