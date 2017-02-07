@@ -3,6 +3,7 @@ from sqlalchemy import Column, String, Integer, \
 from sqlalchemy.orm import relationship
 from provider.database import Base
 
+
 class Client(Base):
 
     __tablename__ = 'clients'

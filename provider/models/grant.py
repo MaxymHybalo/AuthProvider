@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, \
     ForeignKey, Boolean, Text, DateTime
 from sqlalchemy.orm import relationship
-from provider.database import Base
+from provider.database import Base, db_session
 
 class Grant(Base):
 
@@ -21,3 +21,8 @@ class Grant(Base):
         if self._scopes:
             return self._scopes.split()
         return []
+
+    def delete(self):
+        db_session.delete(self)
+        db_session.commit()
+        return self

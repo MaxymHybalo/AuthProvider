@@ -43,13 +43,14 @@ def signup_user(json):
         phone = json['phone']
         first_name = json['firstName']
         last_name = json['lastName']
-        if not (((len(username) and len(password) and len(first_name) and len(last_name)) <= 30) and (email <= 40 ) and (phone <= 20)):
+        # TODO rebuild)) 
+        if not (((len(username) and len(password) and len(first_name) and len(last_name)) <= 30) and (len(email) <= 40) and (len(phone) <= 20)):
             return False
-        if (re.findall(r'\W', username, password, first_name, last_name, email, phone) and re.findall(r'\D', phone) \
-                    and not re.match(r'[+]', phone) and not re.search(r'[@]', email)):
+        if re.findall(r'\W', username, password, first_name, last_name, email, phone) and re.findall(r'\D', phone)\
+                and not re.match(r'[+]', phone) and not re.search(r'[@ .]', email):
             return False
         else:
-            user = User(login=username, password=password, email=email, phone=phone,\
+            user = User(login=username, password=password, email=email, phone=phone,
                         first_name=first_name, last_name=last_name)
             try:
                 db_session.add(user)

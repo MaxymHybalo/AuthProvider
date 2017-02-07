@@ -9,6 +9,7 @@ def token_expected(f):
         if request.headers.get('Authorization'):
             token = request.headers['Authorization'].split(' ')
             data = get_token_data(token)
+            print(data)
         if data['verified']:
             return f(*args, verified=data['verified'], login=data['login'])
         return f(*args, verified=data['verified'])

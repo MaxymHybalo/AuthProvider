@@ -1,6 +1,6 @@
-from flask import Flask, make_response, jsonify, request
+from flask import Flask, make_response, jsonify, request, session
 from flask_cors import CORS
-from provider.models.user import signup_user, User,user_information
+from provider.models.user import signup_user, User, user_information
 from provider.database import db_session, init_db
 from provider.jwt_auth import token_expected
 
@@ -26,10 +26,13 @@ def authenticate():
     login = request.json.get('username')
     password = request.json.get('password')
     token = generate_access_token(login, password)
+    user = User.query.filter(User.login==login).first()
+    print('User id wrote in session')
+    session['id'] = user.id
     return jsonify({'access_token': token})
 
 
-@app.route('/api/profile', methods=['GET'])
+@app.route('/api/profile/', methods=['GET'])
 def profile():
     return user_information()
 
@@ -64,7 +67,9 @@ def shutdown_session(exception=None):
     db_session.remove()
 
 if __name__ == '__main__':
-    app.debug = True
+    init_db()
+    from provider.oauth2 import app
     app.secret_key = 'development'
+    app.debug = True
     app.run(port=5001)
 
