@@ -10,7 +10,7 @@ export class AuthenticationService {
   login(username: string, password: string) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    return this.http.post('http://ac532bd0.ngrok.io/auth/', JSON.stringify({ username: username, password: password }),{headers:headers})
+    return this.http.post('http://ce02377d.ngrok.io/auth/', JSON.stringify({ username: username, password: password }),{headers:headers})
       .map((response: Response) => {
         // Если успех, то возврощается
         let token = response.json().access_token;

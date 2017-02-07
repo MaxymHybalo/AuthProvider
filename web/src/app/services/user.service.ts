@@ -8,10 +8,10 @@ export class UserService {
     constructor(private http: Http) { }
 
     getVerifyToken() {
-        return this.http.get('http://ac532bd0.ngrok.io/api/profile/', this.jwt()).map((response: Response) => response.json());
+        return this.http.get('http://ce02377d.ngrok.io/api/profile/', this.jwt()).map((response: Response) => response.json());
     }
     getAll(){
-         return this.http.get('http://ac532bd0.ngrok.io/api/profile/', this.jwt()).map((response: Response) => response.json());
+         return this.http.get('http://ce02377d.ngrok.io/api/profile/', this.jwt()).map((response: Response) => response.json());
     }
 
     getById(id: number) {
@@ -19,7 +19,7 @@ export class UserService {
     }
 
     create(user: User) {
-        return this.http.post('http://ac532bd0.ngrok.io/signup/', user, this.jwt()).map((response: Response) => response.json());
+        return this.http.post('http://ce02377d.ngrok.io/signup/', user, this.jwt()).map((response: Response) => response.json());
     }
 
     update(user: User) {

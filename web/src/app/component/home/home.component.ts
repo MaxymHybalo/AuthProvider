@@ -6,7 +6,8 @@ import {AlertService} from "../../services/alert.service"
 
 @Component({
     selector: "app-home",
-    templateUrl: "home.component.html"
+    templateUrl: "home.component.html",
+    styleUrls:['home.component.scss']
 })
 export class HomeComponent implements OnInit {
     currentUser: User;
@@ -23,9 +24,6 @@ export class HomeComponent implements OnInit {
         this.verifyToken();
     }
 
-    // deleteUser(id: number) {
-    //     this.userService.delete(id).subscribe(() => { this.loadAllUsers(); });
-    // }
     private verifyToken(){
         this.userService.getVerifyToken().subscribe(
         user => { 
@@ -38,8 +36,4 @@ export class HomeComponent implements OnInit {
 
         } )
     }
-
-    // private loadUser() {
-    //     this.userService.getAll().subscribe(users => { this.users = users; });
-    // }
 }
