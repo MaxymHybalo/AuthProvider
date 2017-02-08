@@ -14,6 +14,16 @@ class User(Base):
     last_name = Column(String(30), nullable=False)
     email = Column(String(40), nullable=False)
     phone = Column(String(20))
+    # TODO bad json data
+
+    def __init__(self, json):
+        if json:
+            self.login = json['username']
+            self.password = json['password']
+            self.email = json['email']
+            self.phone = json['phone']
+            self.first_name = json['firstName']
+            self.last_name = json['lastName']
 
     def check_password(self, password):
         if password and self.password == password:
@@ -31,43 +41,24 @@ class User(Base):
                "\n\tphone: " + self.phone + \
                "\n}"  # For simplify user data output
 
-
-def snd_var(value, reg_exp):
+#Todo Verification
+def verify_by_pattern(value, reg_exp, error_message=None):
     for char in value:
-        if re.findall(reg_exp, char):
-            pass
-        else:
-            return False
+        if not re.findall(reg_exp, char):
+            return False, error_message
+    return True, None
+# for first, last name pattern r'[a-zA-Zа-яА-Я]'
 
 
-def signup_user(json):
-    if json:
-        init_db()
-        if User.query.filter(User.login == json['username']).first():
-            return False
-        username = json['username']
-        password = json['password']
-        email = json['email']
-        phone = json['phone']
-        first_name = json['firstName']
-        last_name = json['lastName']
-        # TODO rebuild)) 
-        if not (((len(username) and len(password) and len(first_name) and len(last_name)) <= 30) and (len(email) <= 40) and (len(phone) <= 20)):
-            return False
-        snd_var(username, r'\w')
-        snd_var(password, r'\w')
-        snd_var(first_name, r'\w')
-        snd_var(last_name, r'\w')
-        snd_var(email, r'[\w@.]')
-        snd_var(phone, r'[+0-9]')
-        user = User(login=username, password=password, email=email, phone=phone,
-                    first_name=first_name, last_name=last_name)
-        try:
-            db_session.add(user)
-            db_session.commit()
-        except:
-            db_session.rollback()
-        return True
+def signup_user(user):
+    if User.query.filter(User.login == user.login).first():
+        return False
+    try:
+        db_session.add(user)
+        db_session.commit()
+    except:
+        db_session.rollback()
+    return True
 
 
 def generate_access_token(login, password):
@@ -76,7 +67,6 @@ def generate_access_token(login, password):
     try:
         init_db()
         user = User.query.filter(User.login == login).first()
-    # TODO Handle exception
     except:
         db_session.rollback()
     if user and user.check_password(password):
