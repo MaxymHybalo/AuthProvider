@@ -1,9 +1,10 @@
 from sqlalchemy import Column, String, Integer
 from provider.database import init_db, db_session, Base
 from provider.jwt_auth import token_expected
+import re
+
 
 class User(Base):
-
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     login = Column(String(30), unique=True, index=True,
@@ -31,8 +32,15 @@ class User(Base):
                "\n}"  # For simplify user data output
 
 
+def snd_var(value, reg_exp):
+    for char in value:
+        if re.findall(reg_exp, char):
+            pass
+        else:
+            return False
+
+
 def signup_user(json):
-    import re
     if json:
         init_db()
         if User.query.filter(User.login == json['username']).first():
@@ -46,18 +54,20 @@ def signup_user(json):
         # TODO rebuild)) 
         if not (((len(username) and len(password) and len(first_name) and len(last_name)) <= 30) and (len(email) <= 40) and (len(phone) <= 20)):
             return False
-        if re.findall(r'\W', username, password, first_name, last_name, email, phone) and re.findall(r'\D', phone)\
-                and not re.match(r'[+]', phone) and not re.search(r'[@ .]', email):
-            return False
-        else:
-            user = User(login=username, password=password, email=email, phone=phone,
-                        first_name=first_name, last_name=last_name)
-            try:
-                db_session.add(user)
-                db_session.commit()
-            except:
-                db_session.rollback()
-            return True
+        snd_var(username, r'\w')
+        snd_var(password, r'\w')
+        snd_var(first_name, r'\w')
+        snd_var(last_name, r'\w')
+        snd_var(email, r'[\w@.]')
+        snd_var(phone, r'[+0-9]')
+        user = User(login=username, password=password, email=email, phone=phone,
+                    first_name=first_name, last_name=last_name)
+        try:
+            db_session.add(user)
+            db_session.commit()
+        except:
+            db_session.rollback()
+
 
 
 def generate_access_token(login, password):
