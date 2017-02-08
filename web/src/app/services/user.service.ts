@@ -5,30 +5,27 @@ import { User } from '../models/user';
 
 @Injectable()
 export class UserService {
-    constructor(private http: Http) { }
+    url:string;
+    constructor(private http: Http) {
+       this.url = "http://localhost:5001"
+     }
 
     getVerifyToken() {
-        return this.http.get('http://ce02377d.ngrok.io/api/profile/', this.jwt()).map((response: Response) => response.json());
+        return this.http.get(`${this.url}/api/profile/`, this.jwt()).map((response: Response) => response.json());
     }
-    getAll(){
-         return this.http.get('http://ce02377d.ngrok.io/api/profile/', this.jwt()).map((response: Response) => response.json());
-    }
-
-    getById(id: number) {
-        return this.http.get('/api/users/' + id, this.jwt()).map((response: Response) => response.json());
-    }
-
+    // getById(id: number) {
+    //     return this.http.get('/api/users/' + id, this.jwt()).map((response: Response) => response.json());
+    // }
     create(user: User) {
-        return this.http.post('http://ce02377d.ngrok.io/signup/', user, this.jwt()).map((response: Response) => response.json());
+        return this.http.post(`${this.url}/signup/`, user, this.jwt()).map((response: Response) => response.json());
     }
+    // update(user: User) {
+    //     return this.http.put('/api/users/' + user.id, user, this.jwt()).map((response: Response) => response.json());
+    // }
 
-    update(user: User) {
-        return this.http.put('/api/users/' + user.id, user, this.jwt()).map((response: Response) => response.json());
-    }
-
-    delete(id: number) {
-        return this.http.delete('/api/users/' + id, this.jwt()).map((response: Response) => response.json());
-    }
+    // delete(id: number) {
+    //     return this.http.delete('/api/users/' + id, this.jwt()).map((response: Response) => response.json());
+    // }
 
     private jwt() {
         let currentUser = JSON.parse(localStorage.getItem('currentUser'));

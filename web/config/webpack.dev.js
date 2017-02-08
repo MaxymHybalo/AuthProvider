@@ -18,7 +18,7 @@ module.exports = webpackMerge(commonConfig, {
   },
 
   plugins: [
-    // new webpack.OldWatchingPlugin(),
+    
     new webpack.LoaderOptionsPlugin({
       minimize: false,
       debug: false
@@ -36,8 +36,6 @@ module.exports = webpackMerge(commonConfig, {
       'process.env': {
         'ENV': JSON.stringify(ENV)
       }
-    }),
-    new webpack.NewWatchingPlugin(),
-    new webpack.OldWatchingPlugin()
+    })
   ]
 });

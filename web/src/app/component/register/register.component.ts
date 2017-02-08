@@ -24,10 +24,8 @@ export class RegisterComponent {
     let passs = pass;
     if(passs.type == 'password'){
       pass.type = "text";
-      console.log('Change type on text');
     }else if(passs.type == 'text'){
       pass.type = "password";
-      console.log('Change type on password');
     }
   }
 

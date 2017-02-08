@@ -2,7 +2,7 @@
   <div class="column">
     <h2 class="ui teal image header">
       <div class="content">
-        Log-in to your account
+        Log-in
       </div>
     </h2>
     <form name="form" class="ui large form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
@@ -19,8 +19,7 @@
             <input type="password" name="password" placeholder="Password" [(ngModel)]="model.password" #password="ngModel" required>
           </div>
         </div>
-        <!--<div class="ui fluid large teal submit button">Login</div>-->
-        <button class="ui fluid large teal submit button">Login</button>
+        <button class="ui fluid large  submit button">Login</button>
       </div>
 
       <div class="ui error message"></div>
@@ -28,7 +27,7 @@
     </form>
 
     <div class="ui message">
-      New to us? <a [routerLink]="['/register']">Sign Up</a>
+      New to us? <a [routerLink]="['/register']">Sign up!</a>
     </div>
   </div>
 </div>

@@ -1,5 +1,4 @@
-# Test project
-
+# Auth Provider
 1) Install packages:
 
 yarn install
