@@ -51,7 +51,7 @@ def test():
 
 @app.route("/showusers", methods=['GET'])
 def all_users():
-    @token_expected
+    # @token_expected
     def foo(*args, **kwargs):
         init_db()
         users = User.query.all()
@@ -72,10 +72,4 @@ def session_user():
 def shutdown_session(exception=None):
     db_session.remove()
 
-if __name__ == '__main__':
-    init_db()
-    from provider.oauth2 import app
-    app.secret_key = 'development'
-    app.debug = True
-    app.run(port=5001)
 
