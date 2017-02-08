@@ -26,3 +26,4 @@ class Grant(Base):
         db_session.delete(self)
         db_session.commit()
         return self
+1

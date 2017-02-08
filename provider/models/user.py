@@ -67,7 +67,7 @@ def signup_user(json):
             db_session.commit()
         except:
             db_session.rollback()
-
+        return True
 
 
 def generate_access_token(login, password):
