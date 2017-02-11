@@ -9,16 +9,16 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     login = Column(String(30), unique=True, index=True,
                    nullable=False)
-    password = Column(String(30), nullable=False)
-    first_name = Column(String(30), nullable=False)
-    last_name = Column(String(30), nullable=False)
+    password = Column(String(400), nullable=False)
+    first_name = Column(String(200), nullable=False)
+    last_name = Column(String(200), nullable=False)
     email = Column(String(40), nullable=False)
     phone = Column(String(20))
-    # TODO bad json data
 
+    # TODO bad json data
     def __init__(self, json):
         if json:
-            self.login = json['username']
+            self.login = json['login']
             self.password = json['password']
             self.email = json['email']
             self.phone = json['phone']
@@ -26,9 +26,8 @@ class User(Base):
             self.last_name = json['lastName']
 
     def check_password(self, password):
-        if password and self.password == password:
-            return True
-        return False
+        from passlib.hash import pbkdf2_sha256
+        return pbkdf2_sha256.verify(password, self.password)
 
     def to_string(self):
         return "{" \
@@ -42,47 +41,37 @@ class User(Base):
                "\n}"  # For simplify user data output
 
 
-#Todo Verification
-# for first, last name pattern r'[a-zA-Zа-яА-Я]'
-def verify_by_pattern(value, reg_exp, error_message=None):
-    for char in value:
-        if not re.findall(reg_exp, char):
-            return False, error_message
-    return True, None
-
-
-
-# method decryption password pbkdf2_sha256.verify(password, hash)
-def encrypting_pass(password):
-    from passlib.context import CryptContext
-    myctx = CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
-    hash_pass = myctx.hash(password)
-    return hash_pass
+def encrypt_password(password):
+    from passlib.hash import pbkdf2_sha256
+    hashed = pbkdf2_sha256.hash(password)
+    return hashed
 
 
 def signup_user(user):
+
     if User.query.filter(User.login == user.login).first():
         return False
     try:
+        user.password = encrypt_password(user.password)
         db_session.add(user)
+        print("User added to session")
         db_session.commit()
+        print("[New user ", user.login, "]")
     except:
+        print("[error catch]")
         db_session.rollback()
     return True
 
 
-def generate_access_token(login, password):
+def generate_access_token(json):
     import jwt
     user = None
-    try:
-        init_db()
-        user = User.query.filter(User.login == login).first()
-    except:
-        db_session.rollback()
-    if user and user.check_password(password):
-        token = jwt.encode({'login': login, 'verified': True}, key='key', algorithm='HS256')
+    if 'login' and 'password' in json:
+        user = User.query.filter(User.login == json['login']).first()
+    if user and user.check_password(json['password']):
+        token = jwt.encode({'login': json['login'], 'verified': True}, key='key', algorithm='HS256')
         return token.decode('utf-8')
-    token = jwt.encode({'login': login, 'verified': False}, key='key', algorithm='HS256')
+    token = jwt.encode({'login': json['login'], 'verified': False}, key='key', algorithm='HS256')
     return token.decode('utf-8')
 
 
@@ -94,7 +83,7 @@ def user_information(**kwargs):
         try:
             user = User.query.filter(User.login == kwargs['login']).first()
             response = jsonify({
-                    'username': user.login,
+                    'login': user.login,
                     'firstName': user.first_name,
                     'lastName': user.last_name,
                     'phone': user.phone,
@@ -103,3 +92,9 @@ def user_information(**kwargs):
         except:
             db_session.remove()
         return response
+
+
+def test_user_select():
+    u = User.query.get(1)
+    u.first_name
+    return u.first_name

@@ -11,9 +11,9 @@ CORS(app)
 
 @app.route("/signup/", methods=['POST'])
 def signup():
-    print(request.json)
     if request.json:
-        submitted = signup_user(request.json)
+        user = User(request.json)
+        submitted = signup_user(user)
         if submitted:
             return jsonify({"message": True})
     return jsonify({'message': False})
@@ -22,11 +22,7 @@ def signup():
 @app.route("/auth/", methods=['POST'])
 def authenticate():
     from provider.models.user import generate_access_token
-    # TODO check data existing
-    login = request.json.get('username')
-    password = request.json.get('password')
-    token = generate_access_token(login, password)
-    user = User.query.filter(User.login==login).first()
+    token = generate_access_token(request.json)
     return jsonify({'access_token': token})
 
 
@@ -44,7 +40,8 @@ def test():
         if kwargs['verified']:
             return jsonify({"submitted": "all work's fine!"})
         return jsonify({"denied": "authorization error"})
-    return func()
+    from provider.models.user import test_user_select
+    return test_user_select()
 
 
 @app.route("/showusers", methods=['GET'])
