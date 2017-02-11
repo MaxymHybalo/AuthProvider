@@ -43,20 +43,22 @@ class User(Base):
 
 
 #Todo Verification
-
+# for first, last name pattern r'[a-zA-Zа-яА-Я]'
 def verify_by_pattern(value, reg_exp, error_message=None):
     for char in value:
         if not re.findall(reg_exp, char):
             return False, error_message
     return True, None
-# for first, last name pattern r'[a-zA-Zа-яА-Я]'
 
+
+
+# method decryption password pbkdf2_sha256.verify(password, hash)
 def encrypting_pass(password):
     from passlib.context import CryptContext
     myctx = CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
     hash_pass = myctx.hash(password)
     return hash_pass
-# method decryption password pbkdf2_sha256.verify(password, hash)
+
 
 def signup_user(user):
     if User.query.filter(User.login == user.login).first():

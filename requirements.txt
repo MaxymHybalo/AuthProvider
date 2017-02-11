@@ -1,7 +1,6 @@
 cryptography==1.2.3
 Flask==0.12
 Flask-Cors==3.0.2
-Flask-JWT==0.3.2
 Flask-OAuthlib==0.9.3
 Flask-SQLAlchemy==2.1
 gunicorn==19.6.0
