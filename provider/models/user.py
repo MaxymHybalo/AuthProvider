@@ -95,6 +95,6 @@ def user_information(**kwargs):
 
 
 def test_user_select():
-    u = User.query.get(1)
+    u = User.query.get(2)
     u.first_name
     return u.first_name
