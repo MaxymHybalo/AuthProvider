@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request, abort, render_template
 
-
-from provider.models.user import signup_user, User, user_information
+from provider.models.user import User, signup_user
 from provider.utils.jwt_auth import token_expected
 
 user_api = Blueprint('routes_api', __name__)
@@ -9,12 +8,8 @@ user_api = Blueprint('routes_api', __name__)
 
 @user_api.route("/signup/", methods=['POST'])
 def signup():
-    if request.json:
-        user = User(request.json)
-        submitted = signup_user(user)
-        if submitted:
-            return jsonify({"message": True})
-    return jsonify({'message': False})
+    response_message = signup_user(request.json)
+    return jsonify({'message': response_message})
 
 
 @user_api.route("/auth/", methods=['POST'])

@@ -47,7 +47,7 @@ def encrypt_password(password):
     return hashed
 
 
-def signup_user(user):
+def write_user_to_db(user):
 
     if User.query.filter(User.login == user.login).first():
         return False
@@ -94,10 +94,17 @@ def user_information(**kwargs):
         return response
 
 
-def test_user_select():
-    u = User.query.get(2)
-    u.first_name
-    return u.first_name
+def signup_user(json):
+    if json:
+        try:
+            user = User(json)
+            submitted = write_user_to_db(user)
+            if submitted:
+                return 'User register success'
+        except KeyError:
+            return 'Wrong request data'
+    return 'Some server error'
+
 
 def session_user():
     return User.query.get(1)
