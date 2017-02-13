@@ -1,14 +1,19 @@
-from flask_oauthlib.provider import OAuth2Provider
 from _datetime import datetime, timedelta
-from flask import jsonify, request, render_template
-from provider.routes_api import app, session_user
+
+from flask import jsonify, request, render_template, Blueprint
+from flask_oauthlib.provider import OAuth2Provider
+
+from provider.utils.database import db_session
 from provider.models.client import Client
 from provider.models.grant import Grant
 from provider.models.token import Token
 from provider.models.user import User
-from provider.database import db_session, init_db
-from provider.jwt_auth import token_expected
+from provider.models.user import session_user
+from provider.utils.jwt_auth import token_expected
 
+from main import app
+
+oauth_routes = Blueprint('oauth2_routes', __name__)
 oauth = OAuth2Provider(app)
 
 
@@ -70,13 +75,13 @@ def save_token(token, req, *args, **kwargs):
     return tok
 
 
-@app.route('/oauth/token', methods=['GET', 'POST'])
+@oauth_routes.route('/oauth/token', methods=['GET', 'POST'])
 @oauth.token_handler
 def access_handler():
     return None
 
 
-@app.route('/oauth/authorize', methods=['GET', 'POST'])
+@oauth_routes.route('/oauth/authorize', methods=['GET', 'POST'])
 @oauth.authorize_handler
 def authorize(*args,**kwargs):
     user = session_user()
@@ -94,33 +99,11 @@ def authorize(*args,**kwargs):
     return confirm == 'yes'
 
 
-@app.route('/api/me')
+@oauth_routes.route('/api/me')
 @oauth.require_oauth()
 def me():
     user = request.oauth.user
     return jsonify(username=user.login)
-
-
-@app.route('/client')
-def client():
-    user = session_user()
-    if not user:
-        return jsonify(message=False)
-    item = Client(
-        client_id='test_id',
-        client_secret='test_secret',  # code by get_salt
-        _redirect_uris=' '.join([
-            'http://localhost:8000/authorized',
-            'http://127.0.0.1:8000/authorized',
-            'http://dc63510e.ngrok.io/authorized'
-        ]),
-        _default_scopes='email',
-        user_id=user.id
-    )
-    init_db()
-    db_session.add(item)
-    db_session.commit()
-    return jsonify(client_id=item.client_id, client_secret=item.client_secret)
 
 
 @token_expected

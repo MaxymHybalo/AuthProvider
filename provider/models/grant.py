@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, \
     ForeignKey, Boolean, Text, DateTime
 from sqlalchemy.orm import relationship
-from provider.database import Base, db_session
+from provider.utils.database import Base, db_session
 
 class Grant(Base):
 

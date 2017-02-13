@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer
-from provider.database import init_db, db_session, Base
-from provider.jwt_auth import token_expected
-import re
+
+from provider.utils.database import db_session, Base
+from provider.utils.jwt_auth import token_expected
 
 
 class User(Base):
@@ -98,3 +98,6 @@ def test_user_select():
     u = User.query.get(2)
     u.first_name
     return u.first_name
+
+def session_user():
+    return User.query.get(1)
