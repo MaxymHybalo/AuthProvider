@@ -26,4 +26,4 @@ if __name__ == '__main__':
     app.secret_key = 'development'
     app.debug = True
     setup_blueprints()
-    app.run(port=5001)
+    app.run()

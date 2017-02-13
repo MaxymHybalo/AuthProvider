@@ -43,6 +43,7 @@ def all_users():
     def foo(*args, **kwargs):
         users = User.query.all()
         all_users = ''
+        print('[Logger] Show users method entered')
         for u in users:
             all_users += u.to_string() + "\n"
         return all_users
