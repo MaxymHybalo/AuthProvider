@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort, render_template
 
-from provider.models.user import User, signup_user
+from provider.models.user import User, signup_user, user_information
 from provider.utils.jwt_auth import token_expected
 
 user_api = Blueprint('routes_api', __name__)
