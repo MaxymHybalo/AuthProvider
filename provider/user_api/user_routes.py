@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request, abort, render_template
-
-from provider.models.user import User, signup_user, user_information
+from provider.models.user import User, signup_user, user_information, update_user
 from provider.utils.jwt_auth import token_expected
 
 user_api = Blueprint('routes_api', __name__)
@@ -19,10 +18,12 @@ def authenticate():
     return jsonify({'access_token': token})
 
 
-# @user_api.route('/api/user/<changable_field>')
-
-@user_api.route('/api/profile/', methods=['GET'])
+@user_api.route('/api/profile/', methods=['GET', 'PUT'])
 def profile():
+    response_message = str(request.url) + " Success"
+    if request.method == 'PUT':
+        response_message = update_user(request.json)
+        return jsonify(message=response_message)
     return user_information()
 
 

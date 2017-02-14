@@ -1,7 +1,9 @@
 from sqlalchemy import Column, String, Integer, \
     ForeignKey, Boolean, Text, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.exc import SQLAlchemyError
 from provider.utils.database import Base, db_session
+from provider.models.user import User
 from provider.utils.jwt_auth import token_expected
 from werkzeug.security import gen_salt
 
@@ -62,8 +64,9 @@ def write_to_database(json, user):
         client.user_id = user.id
         db_session.add(client)
         db_session.commit()
-    except:
+    except SQLAlchemyError:
         return 'Database writing error'
+    return 'Client added success'
 
 
 @token_expected

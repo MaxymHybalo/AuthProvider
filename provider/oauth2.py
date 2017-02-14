@@ -83,7 +83,7 @@ def access_handler():
 
 @oauth_routes.route('/oauth/authorize', methods=['GET', 'POST'])
 @oauth.authorize_handler
-def authorize(*args,**kwargs):
+def authorize(*args, **kwargs):
     user = session_user()
     if not user:
         print('User did\'nt loaded')
@@ -110,7 +110,7 @@ def me():
 def current_user(*args, **kwargs):
     if kwargs['verified']:
         print('OAuth.authorize_handler try to load User')
-        return User.query.filter(User.login==kwargs['login']).first()
+        return User.query.filter(User.login == kwargs['login']).first()
     return None
 
 

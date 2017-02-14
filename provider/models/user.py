@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import validates
+from sqlalchemy.exc import SQLAlchemyError
 from provider.utils.database import db_session, Base
 from provider.utils.jwt_auth import token_expected
 
@@ -32,6 +33,16 @@ class User(Base):
     def check_password(self, password):
         from passlib.hash import pbkdf2_sha256
         return pbkdf2_sha256.verify(password, self.password)
+
+    def assign_updates(self, json):
+        if 'firstName' in json:
+            self.first_name = json['firstName']
+        if 'lastName' in json:
+            self.last_name = json['lastName']
+        if 'email' in json:
+            self.email = json['email']
+        if 'phone' in json:
+            self.phone = json['phone']
 
     def to_string(self):
         return "{" \
@@ -75,10 +86,24 @@ def write_user_to_db(user):
         print("User added to session")
         db_session.commit()
         print("[New user ", user.login, "]")
-    except:
+    except SQL:
         print("[error catch]")
         db_session.rollback()
     return True
+
+
+@token_expected
+def update_user(json, **kwargs):
+    if kwargs['verified']:
+        user = User.query.filter(User.login == kwargs['login']).first()
+        user.assign_updates(json)
+        try:
+            db_session.commit()
+        except SQLAlchemyError:
+            return 'Server error'
+        print('[Logger] user inf. wrote to db')
+        return 'Change user information accepted'
+    return 'Change user information discarded'
 
 
 def generate_access_token(json):
@@ -107,7 +132,7 @@ def user_information(**kwargs):
                     'phone': user.phone,
                     'email': user.email
                 })
-        except:
+        except SQLAlchemyError:
             db_session.remove()
         return response
 
