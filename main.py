@@ -23,9 +23,9 @@ def setup():
 
 app = Flask(__name__)
 
-# Deploying config
+# TODO Deploying config, change db location
 #
-setup()
+# setup()
 #
 # Local development server config
 #

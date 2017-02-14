@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer
-
+from sqlalchemy.orm import validates
 from provider.utils.database import db_session, Base
 from provider.utils.jwt_auth import token_expected
 
@@ -23,6 +23,11 @@ class User(Base):
             self.phone = json['phone']
             self.first_name = json['firstName']
             self.last_name = json['lastName']
+
+    @validates('email')
+    def validate_login(self, key, email):
+        assert '@' in email
+        return email
 
     def check_password(self, password):
         from passlib.hash import pbkdf2_sha256
@@ -49,6 +54,8 @@ def signup_user(json):
                 return 'User register success'
         except KeyError:
             return 'Wrong request data'
+        except AssertionError:
+            return 'User data invalid'
     return 'Some server error'
 
 

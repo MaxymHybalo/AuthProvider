@@ -19,6 +19,8 @@ def authenticate():
     return jsonify({'access_token': token})
 
 
+# @user_api.route('/api/user/<changable_field>')
+
 @user_api.route('/api/profile/', methods=['GET'])
 def profile():
     return user_information()
