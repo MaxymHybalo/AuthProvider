@@ -35,7 +35,7 @@ def save_grant(client_id, code, request, *args, **kwargs):
         code=code['code'],
         redirect_uri=request.redirect_uri,
         _scopes=' '.join(request.scopes),
-        user=session_user(),  # TODO set current user,
+        user=session_user(),
         expires=expires
     )
     db_session.add(grant)

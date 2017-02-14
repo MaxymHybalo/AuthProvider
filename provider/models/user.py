@@ -15,7 +15,6 @@ class User(Base):
     email = Column(String(40), nullable=False)
     phone = Column(String(20))
 
-    # TODO bad json data
     def __init__(self, json):
         if json:
             self.login = json['login']
