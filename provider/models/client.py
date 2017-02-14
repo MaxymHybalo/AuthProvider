@@ -1,7 +1,9 @@
 from sqlalchemy import Column, String, Integer, \
     ForeignKey, Boolean, Text, DateTime
 from sqlalchemy.orm import relationship
-from provider.utils.database import Base
+from provider.utils.database import Base, db_session
+from provider.utils.jwt_auth import token_expected
+from werkzeug.security import gen_salt
 
 
 class Client(Base):
@@ -19,6 +21,11 @@ class Client(Base):
     is_confidential = Column(Boolean)
     _redirect_uris = Column(Text)
     _default_scopes = Column(Text)
+
+    def __init__(self, json):
+        self.name = json['name']
+        self.description = json['description']
+        self._redirect_uris = json['url']
 
     @property
     def client_type(self):
@@ -41,3 +48,31 @@ class Client(Base):
         if self._default_scopes:
             return self._default_scopes.split()
         return []
+
+
+def write_to_database(json, user):
+    try:
+        client = Client(json)
+    except KeyError:
+        return 'Wrong request data'
+    try:
+        client.client_id = gen_salt(40)
+        client.client_secret = gen_salt(50)
+        client._default_scopes = 'email'
+        client.user_id = user.id
+        db_session.add(client)
+        db_session.commit()
+    except:
+        return 'Database writing error'
+
+
+@token_expected
+def add_client(json, **kwargs):
+    user = None
+    if kwargs['verified']:
+        user = User.query.filter(User.login == kwargs['login']).first()
+    if user:
+        return write_to_database(json, user)
+    return 'You are not authorized'
+
+

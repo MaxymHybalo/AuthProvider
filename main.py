@@ -25,7 +25,7 @@ app = Flask(__name__)
 
 # Deploying config
 #
-setup()
+# setup()
 #
 # Local development server config
 #

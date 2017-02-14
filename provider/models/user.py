@@ -41,6 +41,18 @@ class User(Base):
                "\n}"  # For simplify user data output
 
 
+def signup_user(json):
+    if json:
+        try:
+            user = User(json)
+            submitted = write_user_to_db(user)
+            if submitted:
+                return 'User register success'
+        except KeyError:
+            return 'Wrong request data'
+    return 'Some server error'
+
+
 def encrypt_password(password):
     from passlib.hash import pbkdf2_sha256
     hashed = pbkdf2_sha256.hash(password)
@@ -92,18 +104,6 @@ def user_information(**kwargs):
         except:
             db_session.remove()
         return response
-
-
-def signup_user(json):
-    if json:
-        try:
-            user = User(json)
-            submitted = write_user_to_db(user)
-            if submitted:
-                return 'User register success'
-        except KeyError:
-            return 'Wrong request data'
-    return 'Some server error'
 
 
 def session_user():
