@@ -26,14 +26,6 @@ def profile():
 
 @user_api.route("/test/api/", methods=['GET'])
 def test():
-    # TODO seems like needed to carry out routes logic to another function
-    @token_expected
-    def func(*args, **kwargs):
-        print(kwargs)
-        if kwargs['verified']:
-            return jsonify({"submitted": "all work's fine!"})
-        return jsonify({"denied": "authorization error"})
-
     return render_template('index.html')
 
 
