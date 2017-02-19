@@ -3,7 +3,7 @@ from sqlalchemy.orm import validates
 from sqlalchemy.exc import SQLAlchemyError
 from provider.utils.database import db_session, Base
 from provider.utils.jwt_auth import token_expected
-
+import re
 
 class User(Base):
     __tablename__ = "users"
@@ -29,6 +29,11 @@ class User(Base):
     def validate_login(self, key, email):
         assert '@' in email
         return email
+
+    @validates('login')
+    def validate_login(self,login):
+        pattern = ''.join(re.findall(r'\w\n', login))
+
 
     def check_password(self, password):
         from passlib.hash import pbkdf2_sha256

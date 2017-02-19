@@ -29,6 +29,14 @@ class Client(Base):
         self.description = json['description']
         self._redirect_uris = json['url']
 
+    def serialize(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'id': self.client_id,
+            'secret': self.client_secret
+        }
+
     @property
     def client_type(self):
         if self.is_confidential:
@@ -71,6 +79,7 @@ def write_to_database(json, user):
 
 @token_expected
 def add_client(json, **kwargs):
+    # TODO looks like possible carry out next 3 lines to user module method which return user object
     user = None
     if kwargs['verified']:
         user = User.query.filter(User.login == kwargs['login']).first()
@@ -79,3 +88,15 @@ def add_client(json, **kwargs):
     return 'You are not authorized'
 
 
+@token_expected
+def get_user_clients(**kwargs):
+    user = None
+    if kwargs['verified']:
+        user = User.query.filter(User.login == kwargs['login']).first()
+    if user:
+        clients = Client.query.filter(Client.user == user).all()
+        dilist = list()
+        for i in clients:
+            dilist.append(i.serialize())
+        return dilist
+    return "Something work falsely"
