@@ -24,3 +24,16 @@ def get_token_data(token):
         except jwt.InvalidTokenError:
             data['verified'] = False
     return data
+
+
+def generate_access_token(json):
+    from provider.models.user import User
+    import jwt
+    user = None
+    if 'login' and 'password' in json:
+        user = User.query.filter(User.login == json['login']).first()
+    if user and user.check_password(json['password']):
+        token = jwt.encode({'login': json['login'], 'verified': True}, key='key', algorithm='HS256')
+        return token.decode('utf-8')
+    token = jwt.encode({'login': json['login'], 'verified': False}, key='key', algorithm='HS256')
+    return token.decode('utf-8')

@@ -8,7 +8,6 @@ from provider.models.client import Client
 from provider.models.grant import Grant
 from provider.models.token import Token
 from provider.models.user import User
-from provider.models.user import session_user
 from provider.utils.jwt_auth import token_expected
 
 from main import app

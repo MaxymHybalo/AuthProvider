@@ -6,10 +6,10 @@ from provider.utils.database import init_db
 def setup_blueprints():
     from provider.user_api.user_routes import user_api
     from provider.client_api.client_routes import client_routes
-    from provider.oauth2 import oauth_routes
+    # from provider.oauth2 import oauth_routes
     app.register_blueprint(user_api)
     app.register_blueprint(client_routes)
-    app.register_blueprint(oauth_routes)
+    # app.register_blueprint(oauth_routes)
 
 
 def setup():

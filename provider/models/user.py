@@ -5,6 +5,7 @@ from provider.utils.database import db_session, Base
 from provider.utils.jwt_auth import token_expected
 import re
 
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
@@ -33,7 +34,6 @@ class User(Base):
     @validates('login')
     def validate_login(self,login):
         pattern = ''.join(re.findall(r'\w\n', login))
-
 
     def check_password(self, password):
         from passlib.hash import pbkdf2_sha256
@@ -82,7 +82,6 @@ def encrypt_password(password):
 
 
 def write_user_to_db(user):
-
     if User.query.filter(User.login == user.login).first():
         return False
     try:
@@ -97,50 +96,35 @@ def write_user_to_db(user):
     return True
 
 
-@token_expected
-def update_user(json, **kwargs):
-    if kwargs['verified']:
-        user = User.query.filter(User.login == kwargs['login']).first()
-        user.assign_updates(json)
-        try:
-            db_session.commit()
-        except SQLAlchemyError:
-            return 'Server error'
-        print('[Logger] user inf. wrote to db')
-        return 'Change user information accepted'
-    return 'Change user information discarded'
+def update_user(json):
+    user = current_user()
+    user.assign_updates(json)
+    try:
+        db_session.commit()
+    except SQLAlchemyError:
+        return 'Server error'
+    print('[Logger] user inf. wrote to db')
+    return 'Change user information accepted'
 
 
-def generate_access_token(json):
-    import jwt
-    user = None
-    if 'login' and 'password' in json:
-        user = User.query.filter(User.login == json['login']).first()
-    if user and user.check_password(json['password']):
-        token = jwt.encode({'login': json['login'], 'verified': True}, key='key', algorithm='HS256')
-        return token.decode('utf-8')
-    token = jwt.encode({'login': json['login'], 'verified': False}, key='key', algorithm='HS256')
-    return token.decode('utf-8')
-
-
-@token_expected
-def user_information(**kwargs):
+def user_information():
     from flask import jsonify
     response = jsonify({"message": False})
-    if kwargs['verified']:
-        try:
-            user = User.query.filter(User.login == kwargs['login']).first()
-            response = jsonify({
+    try:
+        user = current_user()
+        response = jsonify({
                     'login': user.login,
                     'firstName': user.first_name,
                     'lastName': user.last_name,
                     'phone': user.phone,
                     'email': user.email
                 })
-        except SQLAlchemyError:
-            db_session.remove()
-        return response
+    except SQLAlchemyError:
+        db_session.remove()
+    return response
 
 
-def session_user():
-    return User.query.get(1)
+@token_expected
+def current_user(**kwargs):
+    if kwargs['verified']:
+        return User.query.filter(User.login == kwargs['login']).first()

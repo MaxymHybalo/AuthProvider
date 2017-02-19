@@ -13,7 +13,7 @@ def signup():
 
 @user_api.route("/auth/", methods=['POST'])
 def authenticate():
-    from provider.models.user import generate_access_token
+    from provider.utils.jwt_auth import generate_access_token
     token = generate_access_token(request.json)
     return jsonify({'access_token': token})
 
@@ -30,19 +30,6 @@ def profile():
 @user_api.route("/test/api/", methods=['GET'])
 def test():
     return render_template('index.html')
-
-
-@user_api.route("/showusers", methods=['GET'])
-def all_users():
-    # @token_expected
-    def foo(*args, **kwargs):
-        users = User.query.all()
-        all_users = ''
-        print('[Logger] Show users method entered')
-        for u in users:
-            all_users += u.to_string() + "\n"
-        return all_users
-    return foo()
 
 
 

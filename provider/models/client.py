@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, Integer, \
 from sqlalchemy.orm import relationship
 from sqlalchemy.exc import SQLAlchemyError
 from provider.utils.database import Base, db_session
-from provider.models.user import User
+from provider.models.user import User, current_user
 from provider.utils.jwt_auth import token_expected
 from werkzeug.security import gen_salt
 
@@ -77,22 +77,15 @@ def write_to_database(json, user):
     return 'Client added success'
 
 
-@token_expected
-def add_client(json, **kwargs):
-    # TODO looks like possible carry out next 3 lines to user module method which return user object
-    user = None
-    if kwargs['verified']:
-        user = User.query.filter(User.login == kwargs['login']).first()
+def add_client(json):
+    user = current_user()
     if user:
         return write_to_database(json, user)
     return 'You are not authorized'
 
 
-@token_expected
-def get_user_clients(**kwargs):
-    user = None
-    if kwargs['verified']:
-        user = User.query.filter(User.login == kwargs['login']).first()
+def get_user_clients():
+    user = current_user()
     if user:
         clients = Client.query.filter(Client.user == user).all()
         dilist = list()
