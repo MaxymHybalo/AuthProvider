@@ -2,8 +2,8 @@ from flask import Flask, url_for, session, request, jsonify
 from flask_oauthlib.client import OAuth
 
 
-CLIENT_ID = 'test_id'
-CLIENT_SECRET = 'test_secret'
+CLIENT_ID = 'FAg2xBX5D8ntUrcb9vf6sekXs7TR0rbrBqTdaX8V'
+CLIENT_SECRET = 'fbRT8iGliufu8R279JghF96Angt4mMYWrSQOLttTwPhR7W074W'
 
 
 app = Flask(__name__)
@@ -15,12 +15,18 @@ remote = oauth.remote_app(
     'remote',
     consumer_key=CLIENT_ID,
     consumer_secret=CLIENT_SECRET,
-    request_token_params={'scope': 'email'},
-    base_url='http://127.0.0.1:5001/api/',
+    request_token_params={},
+    base_url='http://127.0.0.1:5000/api/',
     request_token_url=None,
-    access_token_url='http://127.0.0.1:5001/oauth/token',
-    authorize_url='http://127.0.0.1:5001/oauth/authorize'
+    access_token_url='http://127.0.0.1:5000/oauth/token',
+    # authorize_url='http://127.0.0.1:5000/oauth/authorize'
+    authorize_url='http://mendelson.ml/sobaken'
 )
+#
+# Content-Type: application/x-www-form-urlencoded
+# Content-Length: 149
+#
+# client_id=FAg2xBX5D8ntUrcb9vf6sekXs7TR0rbrBqTdaX8V&scope=email&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fauthorized&confirm=yes
 
 
 @app.route('/')
@@ -56,4 +62,4 @@ if __name__ == '__main__':
     import os
     os.environ['DEBUG'] = 'true'
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-    app.run(host='localhost', port=8000)
+    app.run(port=8000)

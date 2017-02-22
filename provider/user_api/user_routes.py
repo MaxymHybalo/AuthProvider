@@ -1,6 +1,8 @@
-from flask import Blueprint, jsonify, request, abort, render_template
+from flask import Blueprint, jsonify, request, abort, render_template, session
 from provider.models.user import User, signup_user, user_information, update_user
-from provider.utils.jwt_auth import token_expected
+from provider.utils.jwt_auth import generate_access_token
+from datetime import datetime, timedelta
+from provider.oauth2 import oauth
 
 user_api = Blueprint('routes_api', __name__)
 
@@ -13,8 +15,10 @@ def signup():
 
 @user_api.route("/auth/", methods=['POST'])
 def authenticate():
-    from provider.utils.jwt_auth import generate_access_token
     token = generate_access_token(request.json)
+    session['token'] = token
+    print('Setted session: ', session['token'])
+    session[token] = datetime.utcnow() + timedelta(days=1)
     return jsonify({'access_token': token})
 
 
@@ -32,6 +36,13 @@ def test():
     return render_template('index.html')
 
 
+def get_user_from_session():
+    print(session['token'])
+    from provider.utils.jwt_auth import session_user
+    print('Pre-import call')
+    print('Called get_user_from_session with')
+    print(session['token'])
+    return session_user(session['token'], session[session['token']])
 
 
 

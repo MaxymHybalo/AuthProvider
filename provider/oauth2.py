@@ -1,6 +1,6 @@
 from _datetime import datetime, timedelta
 
-from flask import jsonify, request, render_template, Blueprint
+from flask import jsonify, request, render_template, Blueprint, redirect
 from flask_oauthlib.provider import OAuth2Provider
 
 from provider.utils.database import db_session
@@ -8,22 +8,20 @@ from provider.models.client import Client
 from provider.models.grant import Grant
 from provider.models.token import Token
 from provider.models.user import User
-from provider.utils.jwt_auth import token_expected
 
-from main import app
 
 oauth_routes = Blueprint('oauth2_routes', __name__)
-oauth = OAuth2Provider(app)
+oauth = OAuth2Provider()
 
 
 @oauth.clientgetter
 def load_client(client_id):
-    return Client.query.filter(Client.client_id==client_id).first()
+    return Client.query.filter(Client.client_id == client_id).first()
 
 
 @oauth.grantgetter
 def load_grant(client_id, code):
-    return Grant.query.filter(Grant.client_id==client_id, Grant.code==code).first()
+    return Grant.query.filter(Grant.client_id == client_id, Grant.code == code).first()
 
 
 @oauth.grantsetter
@@ -34,7 +32,7 @@ def save_grant(client_id, code, request, *args, **kwargs):
         code=code['code'],
         redirect_uri=request.redirect_uri,
         _scopes=' '.join(request.scopes),
-        user=session_user(),
+        user=User.query.filter(User.id == 1).first(),
         expires=expires
     )
     db_session.add(grant)
@@ -53,7 +51,7 @@ def load_token(access_token=None, refresh_token=None):
 @oauth.tokensetter
 def save_token(token, req, *args, **kwargs):
     print(req)
-    toks = Token.query.filter(Token.client_id == req.client.client_id and
+    toks = Token.query.filter(Token.client_id == req.client.client_id,
                               Token.user_id == req.user.id)
     for t in toks:
         db_session.delete(t)
@@ -83,19 +81,31 @@ def access_handler():
 @oauth_routes.route('/oauth/authorize', methods=['GET', 'POST'])
 @oauth.authorize_handler
 def authorize(*args, **kwargs):
-    user = session_user()
-    if not user:
-        print('User did\'nt loaded')
-        return jsonify({'message': False})
     if request.method == 'GET':
+        user = User.query.filter(User.id == 1).first()
         client_id = kwargs['client_id']
-        client = Client.query.filter(Client.client_id==client_id).first()
+        client = Client.query.filter(Client.client_id == client_id).first()
         kwargs['client'] = client
         kwargs['user'] = user
-        return render_template('authorize.html', **kwargs)
-    confirm = request.form.get('confirm', 'no')
-    print("Confirm %s", confirm)
-    return confirm == 'yes'
+        from provider.user_api.user_routes import get_session
+        print(get_session().keys())
+        return redirect('http://mendelson.ml/profile')
+    return True
+
+#
+# @oauth_routes.route('/oauth/authorize', methods=['GET', 'POST'])
+# @oauth.authorize_handler
+# def authorize(*args, **kwargs):
+#     if request.method == 'GET':
+#         user = User.query.filter(User.id == 1).first()
+#         client_id = kwargs['client_id']
+#         client = Client.query.filter(Client.client_id == client_id).first()
+#         kwargs['client'] = client
+#         kwargs['user'] = user
+#         from provider.user_api.user_routes import get_session
+#         return render_template('authorize.html', **kwargs)
+#     print(request)
+#     return True
 
 
 @oauth_routes.route('/api/me')
@@ -103,16 +113,3 @@ def authorize(*args, **kwargs):
 def me():
     user = request.oauth.user
     return jsonify(username=user.login)
-
-
-@token_expected
-def current_user(*args, **kwargs):
-    if kwargs['verified']:
-        print('OAuth.authorize_handler try to load User')
-        return User.query.filter(User.login == kwargs['login']).first()
-    return None
-
-
-
-
-

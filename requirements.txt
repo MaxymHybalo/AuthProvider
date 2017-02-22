@@ -15,3 +15,4 @@ SQLAlchemy==1.1.5
 Werkzeug==0.11.15
 passlib==1.7.1
 cymysql==0.8.9
+Flask-Session==0.3.0
