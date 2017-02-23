@@ -20,10 +20,10 @@ remote = oauth.remote_app(
     request_token_url=None,
     access_token_url='http://18768e9c.ngrok.io/oauth/token',
     authorize_url='http://18768e9c.ngrok.io/oauth/authorize'
-    # authorize_url='http://mendelson.ml/sobaken'
+
 )
-#
-# Content-
+
+
 @app.route('/')
 def index():
     if 'remote_oauth' in session:

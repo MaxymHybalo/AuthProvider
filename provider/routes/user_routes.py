@@ -9,7 +9,7 @@ user_api = Blueprint('routes_api', __name__)
 @user_api.route('/login', methods=('GET', 'POST'))
 def home():
     if request.method == 'POST':
-        session.pop('id')
+        clear_session()
         login = request.form.get('login')
         password = request.form.get('password')
         user = User.query.filter(User.login == login).first()
@@ -22,7 +22,7 @@ def home():
 
 @user_api.route('/logout', methods=['POST'])
 def logout():
-    session.pop('id')
+    clear_session()
     return redirect('/')
 
 
@@ -40,22 +40,15 @@ def authenticate():
 
 @user_api.route('/api/profile/', methods=['GET', 'PUT'])
 def profile():
-    response_message = str(request.url) + " Success"
     if request.method == 'PUT':
         response_message = update_user(request.json)
         return jsonify(message=response_message)
     return user_information()
 
 
-def get_user_from_session():
-    print(session['token'])
-    from provider.utils.jwt_auth import session_user
-    print('Pre-import call')
-    print('Called get_user_from_session with')
-    print(session['token'])
-    return session_user(session['token'], session[session['token']])
-
-
+def clear_session():
+    if 'id' in session:
+        session.pop('id')
 
 
 

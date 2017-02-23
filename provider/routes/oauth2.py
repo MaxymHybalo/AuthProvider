@@ -82,7 +82,7 @@ def access_token():
 @oauth_api.route('/oauth/authorize', methods=['GET', 'POST'])
 @oauth.authorize_handler
 def authorize(*args, **kwargs):
-    # print('Authorize call: ', session['id'])
+
     user = current_session_user()
     if not user:
         return redirect('/login')
@@ -101,5 +101,5 @@ def authorize(*args, **kwargs):
 @oauth.require_oauth()
 def me():
     user = request.oauth.user
-    return jsonify(username=user.login)
+    return jsonify(username=user.login, email=user.email)
 

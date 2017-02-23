@@ -145,6 +145,5 @@ def current_user(**kwargs):
 def current_session_user():
     from flask import session
     if 'id' in session:
-        print(session.keys())
         return User.query.get(session['id'])
     return None
