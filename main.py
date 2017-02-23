@@ -27,7 +27,7 @@ def setup_blueprints():
 
 # TODO Deploying config, change db location
 #
-# setup()
+setup()
 #
 # Local development server config
 #
