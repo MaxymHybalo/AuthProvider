@@ -1,10 +1,26 @@
-from flask import Blueprint, jsonify, request, abort, render_template, session
+from flask import Blueprint, jsonify, request, redirect, render_template, session
 from provider.models.user import User, signup_user, user_information, update_user
 from provider.utils.jwt_auth import generate_access_token
 from datetime import datetime, timedelta
 from provider.oauth2 import oauth
 
 user_api = Blueprint('routes_api', __name__)
+
+
+@user_api.route('/login', methods=('GET', 'POST'))
+def home():
+    if request.method == 'POST':
+        login = request.form.get('login')
+        password = request.form.get('password')
+        user = User.query.filter(User.login == login).first()
+        if user and user.check_password(password):
+            session['id'] = user.id
+        print(user.id)
+        return redirect('/login')
+    # Sense of redirect data to front-end server
+    print(request.headers)
+    from provider.models.user import current_session_user
+    return render_template('home.html', user=current_session_user())
 
 
 @user_api.route("/signup/", methods=['POST'])
@@ -16,9 +32,6 @@ def signup():
 @user_api.route("/auth/", methods=['POST'])
 def authenticate():
     token = generate_access_token(request.json)
-    session['token'] = token
-    print('Setted session: ', session['token'])
-    session[token] = datetime.utcnow() + timedelta(days=1)
     return jsonify({'access_token': token})
 
 
@@ -29,11 +42,6 @@ def profile():
         response_message = update_user(request.json)
         return jsonify(message=response_message)
     return user_information()
-
-
-@user_api.route("/test/api/", methods=['GET'])
-def test():
-    return render_template('index.html')
 
 
 def get_user_from_session():

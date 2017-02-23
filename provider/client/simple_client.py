@@ -15,12 +15,12 @@ remote = oauth.remote_app(
     'remote',
     consumer_key=CLIENT_ID,
     consumer_secret=CLIENT_SECRET,
-    request_token_params={},
-    base_url='http://127.0.0.1:5000/api/',
+    request_token_params={'scope': 'email'},
+    base_url='http://18768e9c.ngrok.io/api/',
     request_token_url=None,
-    access_token_url='http://127.0.0.1:5000/oauth/token',
-    # authorize_url='http://127.0.0.1:5000/oauth/authorize'
-    authorize_url='http://mendelson.ml/sobaken'
+    access_token_url='http://18768e9c.ngrok.io/oauth/token',
+    authorize_url='http://18768e9c.ngrok.io/oauth/authorize'
+    # authorize_url='http://mendelson.ml/sobaken'
 )
 #
 # Content-Type: application/x-www-form-urlencoded

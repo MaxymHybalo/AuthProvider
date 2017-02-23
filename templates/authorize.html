@@ -5,7 +5,7 @@
   <title>Authorization</title>
 </head>
 <body>
-  <p>Client: {{ client.client_id }}</p>
+  <p>Client: {{ client.name }}</p>
   <p>User: {{ user.login }}</p>
   <form action="/oauth/authorize" method="post">
     <p>Allow access?</p>
@@ -17,9 +17,6 @@
     <input type="hidden" name="state" value="{{ state }}">
     {% endif %}
     <input type="submit" name="confirm" value="yes">
-    <input type="submit" name="confirmx" value="no">
+    <input type="submit" name="confirm" value="no">
   </form>
 </body>
-
-application/jsom
-application/form

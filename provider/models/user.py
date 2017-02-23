@@ -128,3 +128,11 @@ def user_information():
 def current_user(**kwargs):
     if kwargs['verified']:
         return User.query.filter(User.login == kwargs['login']).first()
+
+
+def current_session_user():
+    from flask import session
+    if 'id' in session:
+        print(session.keys())
+        return User.query.get(session['id'])
+    return None

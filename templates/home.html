@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  {% if user %}
+    <p>You are {{ user.login }}</p>
+  {% else %}
+    <p>You are not authenticated</p>
+   <p>Type any username:</p>
+    <form method="post" action="/login">
+      <input type="text" name="login">
+      <input type="password" name="password">
+      <input type="submit">
+    </form>
+  {% endif %}
+
+
+</body>
+</html>
