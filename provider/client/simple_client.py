@@ -23,12 +23,7 @@ remote = oauth.remote_app(
     # authorize_url='http://mendelson.ml/sobaken'
 )
 #
-# Content-Type: application/x-www-form-urlencoded
-# Content-Length: 149
-#
-# client_id=FAg2xBX5D8ntUrcb9vf6sekXs7TR0rbrBqTdaX8V&scope=email&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fauthorized&confirm=yes
-
-
+# Content-
 @app.route('/')
 def index():
     if 'remote_oauth' in session:

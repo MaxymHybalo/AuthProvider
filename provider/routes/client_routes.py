@@ -9,8 +9,10 @@ client_routes = Blueprint('client_routes', __name__)
 @client_routes.route('/client/', methods=['POST', 'GET'])
 def client():
     if request.method == 'POST':
+        print('[LOG] Client creating')
         return jsonify(message=add_client(request.json))
     result = get_user_clients()
+    print('[LOG] Client fetching')
     if isinstance(result, list):
         return jsonify(result)
     return jsonify(error=result)

@@ -19,21 +19,33 @@ class User(Base):
 
     def __init__(self, json):
         if json:
-            self.login = json['login']
+            self.login = json['login'].lower()
             self.password = json['password']
-            self.email = json['email']
+            self.email = json['email'].lower()
             self.phone = json['phone']
             self.first_name = json['firstName']
             self.last_name = json['lastName']
 
     @validates('email')
-    def validate_login(self, key, email):
-        assert '@' in email
+    def validate_email(self, key, email):
+        assert '@' in email and not User.query.filter(User.email == email).first()
         return email
 
     @validates('login')
-    def validate_login(self,login):
+    def validate_login(self, key, login):
         pattern = ''.join(re.findall(r'\w\n', login))
+        assert pattern != login or User.query.filter(User.login == login).first()
+        return login
+
+    @validates('password')
+    def validate_password(self,key, password):
+        assert len(password) < 8
+        return password
+
+    @validates('phone')
+    def validate_phone(self, key, phone):
+        assert len(phone) != 14
+        return phone
 
     def check_password(self, password):
         from passlib.hash import pbkdf2_sha256

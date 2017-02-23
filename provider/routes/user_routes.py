@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request, redirect, render_template, session
+
 from provider.models.user import User, signup_user, user_information, update_user
 from provider.utils.jwt_auth import generate_access_token
-from datetime import datetime, timedelta
-from provider.oauth2 import oauth
 
 user_api = Blueprint('routes_api', __name__)
 
@@ -10,17 +9,21 @@ user_api = Blueprint('routes_api', __name__)
 @user_api.route('/login', methods=('GET', 'POST'))
 def home():
     if request.method == 'POST':
+        session.pop('id')
         login = request.form.get('login')
         password = request.form.get('password')
         user = User.query.filter(User.login == login).first()
         if user and user.check_password(password):
             session['id'] = user.id
-        print(user.id)
         return redirect('/login')
-    # Sense of redirect data to front-end server
-    print(request.headers)
     from provider.models.user import current_session_user
     return render_template('home.html', user=current_session_user())
+
+
+@user_api.route('/logout', methods=['POST'])
+def logout():
+    session.pop('id')
+    return redirect('/')
 
 
 @user_api.route("/signup/", methods=['POST'])
