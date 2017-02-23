@@ -1,22 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>AuthProvider</title>
+  <base href="/">
   <meta charset="UTF-8">
-  <title>Authorization</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.css">
 </head>
 <body>
-  <p>Client: {{ client.name }}</p>
-  <p>User: {{ user.login }}</p>
-  <form action="/oauth/authorize" method="post">
-    <p>Allow access?</p>
-    <input type="hidden" name="client_id" value="{{ client.client_id }}">
-    <input type="hidden" name="scope" value="{{ scopes|join(' ') }}">
-    <input type="hidden" name="response_type" value="{{ response_type }}">
-    <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}">
-    {% if state %}
-    <input type="hidden" name="state" value="{{ state }}">
-    {% endif %}
-    <input type="submit" name="confirm" value="yes">
-    <input type="submit" name="confirm" value="no">
-  </form>
+  <style>
+    body {
+      background-color: #DADADA;
+    }
+    body > .grid {
+      height: 100%;
+    }
+    .column {
+      max-width: 450px;
+      margin-top: 50px;
+    }
+
+  </style>
+  <div class="ui middle aligned center aligned grid">
+    <div class="column">
+      <h2 class="ui red image header">
+        <div class="content">
+          {{user.first_name}}, are you confirm to provide your information for {{client.name}}?
+        </div>
+      </h2>
+        <form action="/oauth/authorize" method="post">
+            <input type="hidden" name="client_id" value="{{ client.client_id }}">
+            <input type="hidden" name="scope" value="{{ scopes|join(' ') }}">
+            <input type="hidden" name="response_type" value="{{ response_type }}">
+            <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}">
+            {% if state %}
+            <input type="hidden" name="state" value="{{ state }}">
+            {% endif %}
+            <div class="actions">
+                <button type="submit" class="ui red button" name="confirm" value="no">
+                    <i class="remove icon"></i>No
+                </button>
+                <button type="submit" class="ui green ok button" name="confirm" value="yes">
+                  <i class="checkmark icon"></i>Yes
+                </button>
+            </div>
+        </form>
+    </div>
+  </div>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.js"></script>
 </body>
+</html>
+

@@ -1,4 +1,4 @@
-from flask import Flask, url_for, session, request, jsonify
+from flask import Flask, url_for, session, request, jsonify, render_template, redirect
 from flask_oauthlib.client import OAuth
 
 
@@ -28,14 +28,22 @@ remote = oauth.remote_app(
 def index():
     if 'remote_oauth' in session:
         resp = remote.get('me')
-        return jsonify(resp.data)
+        return render_template('client.html', email=resp.data['email'], login=resp.data['username'])
     next_url = request.args.get('next') or request.referrer or None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
 
 
-@app.route('/authorized')
+@app.route('/profile', methods=['GET'])
+def login():
+    if 'remote_oauth' in session:
+        resp = remote.get('me')
+        return render_template('client.html', email=resp.data['email'], login=resp.data['username'])
+    return render_template('client.html')
+
+
+@app.route('/login/authorized')
 def authorized():
     resp = remote.authorized_response()
     if resp is None:
@@ -45,7 +53,14 @@ def authorized():
         )
     print(resp)
     session['remote_oauth'] = (resp['access_token'], '')
-    return jsonify(oauth_token=resp['access_token'])
+    # return jsonify(oauth_token=resp['access_token'])
+    return redirect('/profile')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('remote_oauth')
+    return redirect('/')
 
 
 @remote.tokengetter

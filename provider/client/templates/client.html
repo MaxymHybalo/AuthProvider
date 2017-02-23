@@ -34,28 +34,23 @@
 				</a>
 				<div class="right menu">
 					<div class="item">
-                        <form action="/logout" method="post">
-                            <input type="submit" class="ui button" value="Logout"/>
-                        </form>
+						<a class="ui orange button" href="/">Login</a>
 					</div>
 				</div>
 			</div>
 		</div>
-		{% if user %}
-		<div class="ui main text container">
+		{% if email and login %}
+		<div >
 			<h4 class="ui horizontal divider header">
-				User Profile
+				User information
 			</h4>
-			<p><b>Login:</b> {{user.login}}</p>
-			<p><b>Firs Name:</b> {{user.first_name}}</p>
-			<p><b>Last Name:</b> {{user.last_name}}</p>
-			<p><b>Phone:</b> {{user.phone}}</p>
-			<p><b>Email:</b> {{user.email}}</p>
+			<p><b>Login: </b>{{login}}</p>
+			<p><b>Email: </b>{{email}}</p>
 		</div>
 		{% else %}
 		<div class="ui main text container">
 			<h4 class="ui horizontal divider header">
-				Please, <a href="/login">log in</a> system or <a href="http://auth0.ml">sign up</a>
+				You are not logged in application. Please login
 			</h4>
 		</div>
 		{% endif %}
