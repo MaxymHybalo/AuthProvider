@@ -33,8 +33,8 @@ class User(Base):
 
     @validates('login')
     def validate_login(self, key, login):
-        pattern = ''.join(re.findall(r'\w\n', login))
-        assert pattern != login or User.query.filter(User.login == login).first()
+        # pattern = ''.join(re.findall(r'\w\n', login))
+        assert login or User.query.filter(User.login == login).first()
         return login
 
     @validates('password')
@@ -42,10 +42,10 @@ class User(Base):
         assert len(password) < 8
         return password
 
-    @validates('phone')
-    def validate_phone(self, key, phone):
-        assert len(phone) != 14
-        return phone
+    # @validates('phone')
+    # def validate_phone(self, key, phone):
+    #     assert len(phone) != 14
+    #     return phone
 
     def check_password(self, password):
         from passlib.hash import pbkdf2_sha256
