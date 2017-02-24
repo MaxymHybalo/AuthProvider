@@ -34,7 +34,7 @@ class User(Base):
     @validates('login')
     def validate_login(self, key, login):
         # pattern = ''.join(re.findall(r'\w\n', login))
-        assert login or User.query.filter(User.login == login).first()
+        assert User.query.filter(User.login == login).first()
         return login
 
     @validates('password')
