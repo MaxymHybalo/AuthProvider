@@ -26,21 +26,21 @@ class User(Base):
             self.first_name = json['firstName']
             self.last_name = json['lastName']
 
-    @validates('email')
-    def validate_email(self, key, email):
-        assert '@' in email and not User.query.filter(User.email == email).first()
-        return email
-
-    @validates('login')
-    def validate_login(self, key, login):
-        # pattern = ''.join(re.findall(r'\w\n', login))
-        assert User.query.filter(User.login == login).first()
-        return login
-
-    @validates('password')
-    def validate_password(self,key, password):
-        assert len(password) < 8
-        return password
+    # @validates('email')
+    # def validate_email(self, key, email):
+    #     assert '@' in email and not User.query.filter(User.email == email).first()
+    #     return email
+    #
+    # @validates('login')
+    # def validate_login(self, key, login):
+    #     # pattern = ''.join(re.findall(r'\w\n', login))
+    #     assert User.query.filter(User.login == login).first()
+    #     return login
+    #
+    # @validates('password')
+    # def validate_password(self,key, password):
+    #     assert len(password) < 8
+    #     return password
 
     # @validates('phone')
     # def validate_phone(self, key, phone):
