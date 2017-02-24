@@ -4,7 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 
 mysql_url_localbase = 'mysql+cymysql://root:root@127.0.0.1:3306/auth_provider_dev'
 
+localbase_tunnel = 'mysql+cymysql://root:root@cfe7e658.ngrok.io/auth_provider_dev'
+
 mysql_deploy = 'mysql+cymysql://b5115c396daeef:4c7e36b8@us-cdbr-iron-east-04.cleardb.net/heroku_33d6128a0e767a7'
+
 sqlite_url = 'sqlite:////dev.db'
 
 

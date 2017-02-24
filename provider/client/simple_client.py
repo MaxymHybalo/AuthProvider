@@ -1,9 +1,9 @@
 from flask import Flask, url_for, session, request, jsonify, render_template, redirect
 from flask_oauthlib.client import OAuth
 
-
-CLIENT_ID = 'FAg2xBX5D8ntUrcb9vf6sekXs7TR0rbrBqTdaX8V'
-CLIENT_SECRET = 'fbRT8iGliufu8R279JghF96Angt4mMYWrSQOLttTwPhR7W074W'
+#Update if and secret if use prodaction base
+CLIENT_ID = 'NSRlIplQzZIt3vK6p5x2ejN91pRsE1kpdJWQi7ve'
+CLIENT_SECRET = 'PtHAOn02DoQcucxKqF0kVJ2cetlQ4lFytfDGitIrHqjulpXIgF'
 
 
 app = Flask(__name__)
@@ -11,15 +11,18 @@ app.debug = True
 app.secret_key = 'secret'
 oauth = OAuth(app)
 
+remote_root_url = 'http://authprovider.herokuapp.com'
+# remote_root_url = 'http://5b7c8ae5.ngrok.io'
+
 remote = oauth.remote_app(
     'remote',
     consumer_key=CLIENT_ID,
     consumer_secret=CLIENT_SECRET,
     request_token_params={'scope': 'email'},
-    base_url='http://18768e9c.ngrok.io/api/',
+    base_url=remote_root_url + '/api/',
     request_token_url=None,
-    access_token_url='http://18768e9c.ngrok.io/oauth/token',
-    authorize_url='http://18768e9c.ngrok.io/oauth/authorize'
+    access_token_url=remote_root_url + '/oauth/token',
+    authorize_url=remote_root_url + '/oauth/authorize'
 
 )
 
@@ -43,7 +46,7 @@ def login():
     return render_template('client.html')
 
 
-@app.route('/login/authorized')
+@app.route('/authorized')
 def authorized():
     resp = remote.authorized_response()
     if resp is None:

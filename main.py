@@ -4,13 +4,13 @@ from flask_cors import CORS
 from provider.utils.database import init_db, db_session
 
 app = Flask(__name__, template_folder='templates')
+CORS(app)
 
 
 def setup():
     from provider.routes.oauth2 import oauth
     app.debug = True
     app.secret_key = 'secret'
-    CORS(app)
     setup_blueprints()
     oauth.init_app(app)
     init_db()

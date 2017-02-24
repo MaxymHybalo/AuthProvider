@@ -6,6 +6,7 @@ from provider.models.grant import Grant
 from provider.models.token import Token
 from provider.models.user import User, current_session_user
 from provider.utils.database import db_session
+from sqlalchemy.exc import InvalidRequestError
 
 oauth_api = Blueprint('oauth_api', __name__)
 oauth = OAuth2Provider()
@@ -13,7 +14,12 @@ oauth = OAuth2Provider()
 
 @oauth.clientgetter
 def load_client(client_id):
-    return Client.query.filter_by(client_id=client_id).first()
+    client = None
+    try:
+        client = Client.query.filter_by(client_id=client_id).first()
+    except InvalidRequestError:
+        db_session.remove()
+    return client
 
 
 @oauth.grantgetter
