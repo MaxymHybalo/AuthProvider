@@ -1,9 +1,10 @@
 from flask import Flask, url_for, session, request, jsonify, render_template, redirect
 from flask_oauthlib.client import OAuth
 
-#Update if and secret if use prodaction base
-CLIENT_ID = 'NSRlIplQzZIt3vK6p5x2ejN91pRsE1kpdJWQi7ve'
-CLIENT_SECRET = 'PtHAOn02DoQcucxKqF0kVJ2cetlQ4lFytfDGitIrHqjulpXIgF'
+#Update id and secret if use prodaction base
+
+CLIENT_ID = 'FAg2xBX5D8ntUrcb9vf6sekXs7TR0rbrBqTdaX8V'
+CLIENT_SECRET = 'fbRT8iGliufu8R279JghF96Angt4mMYWrSQOLttTwPhR7W074W'
 
 
 app = Flask(__name__)
@@ -11,8 +12,8 @@ app.debug = True
 app.secret_key = 'secret'
 oauth = OAuth(app)
 
-remote_root_url = 'http://authprovider.herokuapp.com'
-# remote_root_url = 'http://5b7c8ae5.ngrok.io'
+# remote_root_url = 'http://authprovider.herokuapp.com'
+remote_root_url = 'http://127.0.0.1:5000'
 
 remote = oauth.remote_app(
     'remote',

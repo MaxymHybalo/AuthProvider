@@ -1,23 +1,20 @@
 from flask import Blueprint, jsonify, request, redirect, render_template, session
 
-from provider.models.user import User, signup_user, user_information, update_user, current_session_user
+from provider.models.user import User, signup_user, user_information, update_user, current_session_user, token_user
 from provider.utils.jwt_auth import generate_access_token
 
 
 user_api = Blueprint('routes_api', __name__)
 
 
-@user_api.route('/login', methods=('GET', 'POST'))
-def login():
-    if request.method == 'POST':
-        clear_session()
-        login = request.form.get('login')
-        password = request.form.get('password')
-        user = User.query.filter(User.login == login).first()
-        if user and user.check_password(password):
-            session['id'] = user.id
-        return redirect('/')
-    return render_template('login.html')
+@user_api.route('/login')
+def login_redirect():
+    return render_template('index.html')
+
+
+@user_api.route('/register')
+def register_redirect():
+    return render_template('index.html')
 
 
 @user_api.route('/logout', methods=['POST'])
@@ -40,6 +37,11 @@ def signup():
 @user_api.route("/auth/", methods=['POST'])
 def authenticate():
     token = generate_access_token(request.json)
+    token_id = token_user(token)
+    if token_id:
+        clear_session()
+        print('[LOG] Session call in /auth')
+        session['id'] = token_id
     return jsonify({'access_token': token})
 
 

@@ -144,6 +144,16 @@ def current_user(**kwargs):
 
 def current_session_user():
     from flask import session
+    print(session.keys())
     if 'id' in session:
         return User.query.get(session['id'])
+    return None
+
+
+def token_user(token):
+    from provider.utils.jwt_auth import _get_token_data
+    token_data = _get_token_data(token)
+    login = token_data['login'] if 'login' in token_data and token_data['verified'] else None
+    if login:
+        return User.query.filter(User.login == login).first().id
     return None

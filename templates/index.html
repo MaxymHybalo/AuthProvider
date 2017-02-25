@@ -1,70 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Dashboard</title>
-	<base href="/">
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AuthProvider</title>
+  <base href="/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.css">
 </head>
 <body>
-	<style>
-		.ui.menu .item img.logo {
-			margin-right: 1.5em;
-		}
-		.main.container {
-			margin-top: 7em;
-		}
-		.wireframe {
-			margin-top: 2em;
-		}
-		.ui.footer.segment {
-			margin: 5em 0em 0em;
-			padding: 5em 0em;
-		}
-		.ui.grid > .row > .column {
-			margin-bottom: 10px;
-		}
-	</style>
-	<div class="container">
-		<div class="ui inverted menu">
-			<div class="ui container">
-				<a class="header item">
-					Dashboard
-				</a>
-				<div class="right menu">
-					<div class="item">
-                        <form action="/logout" method="post">
-                            <input type="submit" class="ui button" value="Logout"/>
-                        </form>
-					</div>
-				</div>
-			</div>
-		</div>
-		{% if user %}
-		<div class="ui main text container">
-			<h4 class="ui horizontal divider header">
-				User Profile
-			</h4>
-			<p><b>Login:</b> {{user.login}}</p>
-			<p><b>Firs Name:</b> {{user.first_name}}</p>
-			<p><b>Last Name:</b> {{user.last_name}}</p>
-			<p><b>Phone:</b> {{user.phone}}</p>
-			<p><b>Email:</b> {{user.email}}</p>
-		</div>
-		{% else %}
-		<div class="ui main text container">
-			<h4 class="ui horizontal divider header">
-				Please, <a href="/login">log in</a> system or <a href="http://auth0.ml">sign up</a>
-			</h4>
-		</div>
-		{% endif %}
-	</div> 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.js"></script>
-</body>
+  <app></app>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.js"></script>
+  <script>
+   $(document)
+    .ready(function() {
+      // fix menu when passed
+      $('.masthead')
+        .visibility({
+          once: false,
+          onBottomPassed: function() {
+            $('.fixed.menu').transition('fade in');
+          },
+          onBottomPassedReverse: function() {
+            $('.fixed.menu').transition('fade out');
+          }
+        })
+      ;
+      // create sidebar and attach to menu open
+      $('.ui.sidebar')
+        .sidebar('attach events', '.toc.item')
+      ;
+    })
+  ;
+  </script>
+<script src="../static/js/polyfills.d41d8cd98f00b204e980.js"></script><script src="../static/js/vendor.351cb7c57c2f4321f439.js"></script><script src="../static/js/app.b806cedbd0346d49b5d7.js"></script></body>
 </html>
-
-
-
 

@@ -9,7 +9,7 @@ def token_expected(f):
         data['verified'] = False
         if request.headers.get('Authorization'):
             token = request.headers['Authorization'].split(' ')
-            data = _get_token_data(token)
+            data = _get_token_data(token[1])
             print(data)
         if data['verified']:
             return f(*args, verified=data['verified'], login=data['login'])
@@ -21,7 +21,7 @@ def _get_token_data(token):
     data = dict()
     if token:
         try:
-            data = jwt.decode(token[1], 'key', algorithms=['HS256'])
+            data = jwt.decode(token, 'key', algorithms=['HS256'])
         except jwt.InvalidTokenError:
             data['verified'] = False
     return data
