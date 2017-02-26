@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, redirect, render_template, session
+from flask import Blueprint, jsonify, request, redirect, render_template, session, make_response
 
 from provider.models.user import User, signup_user, user_information, update_user, current_session_user, token_user
 from provider.utils.jwt_auth import generate_access_token
@@ -54,6 +54,7 @@ def profile():
 
 
 def clear_session():
+    print('[LOG] Clear session call')
     if 'id' in session:
         session.pop('id')
 

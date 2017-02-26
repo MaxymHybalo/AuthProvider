@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
 from flask_oauthlib.provider import OAuth2Provider
-from flask import Blueprint, redirect, request, render_template, jsonify
+from flask import Blueprint, redirect, request, render_template, jsonify, make_response, url_for
 from provider.models.client import Client
 from provider.models.grant import Grant
 from provider.models.token import Token
 from provider.models.user import User, current_session_user
 from provider.utils.database import db_session
 from sqlalchemy.exc import InvalidRequestError
+
 
 oauth_api = Blueprint('oauth_api', __name__)
 oauth = OAuth2Provider()
@@ -88,13 +89,13 @@ def access_token():
 @oauth_api.route('/oauth/authorize', methods=['GET', 'POST'])
 @oauth.authorize_handler
 def authorize(*args, **kwargs):
-
+    client_id = kwargs.get('client_id')
+    client = Client.query.filter_by(client_id=client_id).first()
     user = current_session_user()
+    print(request)
     if not user:
-        return redirect('/login')
+        return redirect(url_for('routes_api.login_redirect', returnUrl=client.redirect_uris[0]))
     if request.method == 'GET':
-        client_id = kwargs.get('client_id')
-        client = Client.query.filter_by(client_id=client_id).first()
         kwargs['client'] = client
         kwargs['user'] = user
         return render_template('authorize.html', **kwargs)

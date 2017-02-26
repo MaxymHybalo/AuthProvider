@@ -15,6 +15,7 @@ class Client(Base):
     # Readable client name
     name = Column(String(30))
     description = Column(String(300))
+    url = Column(String(100))
     user_id = Column(ForeignKey('users.id'))
     user = relationship('User')
     client_id = Column(String(40), primary_key=True)
@@ -28,7 +29,7 @@ class Client(Base):
     def __init__(self, json):
         self.name = json['name']
         self.description = json['description']
-        self._redirect_uris = json['url']
+        self.url = json['url']
 
     def serialize(self):
         return {
@@ -69,6 +70,7 @@ def write_to_database(json, user):
     try:
         client.client_id = gen_salt(40)
         client.client_secret = gen_salt(50)
+        client._redirect_uris = client.url + '/authorized'
         client._default_scopes = 'email'
         client.user_id = user.id
         db_session.add(client)

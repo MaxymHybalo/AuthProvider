@@ -1,10 +1,10 @@
 from flask import Flask, url_for, session, request, jsonify, render_template, redirect
 from flask_oauthlib.client import OAuth
 
-#Update id and secret if use prodaction base
+# Update id and secret if use prodaction base
 
-CLIENT_ID = 'FAg2xBX5D8ntUrcb9vf6sekXs7TR0rbrBqTdaX8V'
-CLIENT_SECRET = 'fbRT8iGliufu8R279JghF96Angt4mMYWrSQOLttTwPhR7W074W'
+CLIENT_ID = 'ZFjUZXgpuvuTWZjF074CKiIhoUlqVLqOJj4A74St'
+CLIENT_SECRET = 'lKsUNaG2k0cOB6U7ws72T8OOzRMOv4z7R7bUKCw0EQ46X1poqc'
 
 
 app = Flask(__name__)
@@ -33,7 +33,11 @@ def index():
     if 'remote_oauth' in session:
         resp = remote.get('me')
         return render_template('client.html', email=resp.data['email'], login=resp.data['username'])
-    next_url = request.args.get('next') or request.referrer or None
+    next_url = request.args.get('next')  or None
+    print(request.args.get('next'))
+    print(request.referrer)
+
+    print('Next url ', next_url)
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
