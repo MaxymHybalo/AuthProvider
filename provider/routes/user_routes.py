@@ -1,6 +1,8 @@
-from flask import Blueprint, jsonify, request, redirect, render_template, session, make_response
+from flask import Blueprint, jsonify, request, redirect, render_template, session, make_response, Response
+from werkzeug.exceptions import abort
+from provider.models.user import (User, signup_user, user_information, update_user,
+                                   current_session_user, token_user)
 
-from provider.models.user import User, signup_user, user_information, update_user, current_session_user, token_user
 from provider.utils.jwt_auth import generate_access_token
 
 
@@ -31,6 +33,8 @@ def home():
 @user_api.route("/signup/", methods=['POST'])
 def signup():
     response_message = signup_user(request.json)
+    if 'error' in response_message:
+        return abort(make_response(jsonify(response_message), 503))
     return jsonify({'message': response_message})
 
 
@@ -43,6 +47,7 @@ def authenticate():
         print('[LOG] Session call in /auth')
         session['id'] = token_id
     return jsonify({'access_token': token})
+    # return abort(make_response(jsonify(message="Message goes here"), 400))
 
 
 @user_api.route('/api/profile/', methods=['GET', 'PUT'])

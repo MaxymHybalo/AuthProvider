@@ -37,10 +37,10 @@ class User(Base):
     #     assert User.query.filter(User.login == login).first()
     #     return login
     #
-    # @validates('password')
-    # def validate_password(self,key, password):
-    #     assert len(password) < 8
-    #     return password
+    @validates('password')
+    def validate_password(self,key, password):
+        assert len(password) < 8
+        return password
 
     # @validates('phone')
     # def validate_phone(self, key, phone):
@@ -80,11 +80,12 @@ def signup_user(json):
             submitted = write_user_to_db(user)
             if submitted:
                 return 'User register success'
+            return {'error': 'Some database error'}
         except KeyError:
-            return 'Wrong request data'
+            return {'error': 'Wrong request data'}
         except AssertionError:
-            return 'User data invalid'
-    return 'Some server error'
+            return {'error': 'User data invalid'}
+    return {'error': 'Bad request data'}
 
 
 def encrypt_password(password):
@@ -102,7 +103,7 @@ def write_user_to_db(user):
         print("User added to session")
         db_session.commit()
         print("[New user ", user.login, "]")
-    except SQL:
+    except SQLAlchemyError:
         print("[error catch]")
         db_session.rollback()
     return True
