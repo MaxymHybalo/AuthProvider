@@ -20,9 +20,11 @@ def setup_blueprints():
     from provider.routes.user_routes import user_api
     from provider.routes.client_routes import client_routes
     from provider.routes.oauth2 import oauth_api
+    from provider.routes.service_routes import service_api
     app.register_blueprint(user_api)
     app.register_blueprint(client_routes)
     app.register_blueprint(oauth_api)
+    app.register_blueprint(service_api)
 
 
 # TODO Deploying config, change db location

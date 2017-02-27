@@ -66,7 +66,7 @@ def write_to_database(json, user):
     try:
         client = Client(json)
     except KeyError:
-        return 'Wrong request data'
+        return {'error': 'Wrong request data'}
     try:
         client.client_id = gen_salt(40)
         client.client_secret = gen_salt(50)
@@ -76,15 +76,15 @@ def write_to_database(json, user):
         db_session.add(client)
         db_session.commit()
     except SQLAlchemyError:
-        return 'Database writing error'
-    return 'Client added success'
+        return {'error': 'Database writing error'}
+    return {'message': 'Client added success'}
 
 
 def add_client(json):
     user = current_user()
     if user:
         return write_to_database(json, user)
-    return 'You are not authorized'
+    return {'error': 'You are not authorized'}
 
 
 def delete_client(id):
@@ -94,8 +94,8 @@ def delete_client(id):
         if client.user_id == user.id:
             result = _delete_cascade(client)
             if result:
-                return True, 'Client successful deleted'
-    return False, 'Delete operation error, user or client id wrong'
+                return {'message': 'Client successful deleted'}
+    return {'error': 'Delete operation error, user or client id wrong'}
 
 
 def _delete_cascade(client):
@@ -126,4 +126,4 @@ def get_user_clients():
         for i in clients:
             dilist.append(i.serialize())
         return dilist
-    return "Something work falsely"
+    return {'error': 'Something work falsely'}

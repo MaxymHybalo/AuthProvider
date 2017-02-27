@@ -4,30 +4,30 @@ from provider.models.user import (User, signup_user, user_information, update_us
                                    current_session_user, token_user)
 
 from provider.utils.jwt_auth import generate_access_token
-
+from provider.routes.service_routes import check_for_error, clear_session
 
 user_api = Blueprint('routes_api', __name__)
 
-
-@user_api.route('/login')
-def login_redirect():
-    return render_template('index.html')
-
-
-@user_api.route('/register')
-def register_redirect():
-    return render_template('index.html')
-
-
-@user_api.route('/profile')
-def profile_redirect():
-    return render_template('index.html')
-
-
-@user_api.route('/logout', methods=['POST'])
-def logout():
-    clear_session()
-    return redirect('/')
+#
+# @user_api.route('/login')
+# def login_redirect():
+#     return render_template('index.html')
+#
+#
+# @user_api.route('/register')
+# def register_redirect():
+#     return render_template('index.html')
+#
+#
+# @user_api.route('/profile')
+# def profile_redirect():
+#     return render_template('index.html')
+#
+#
+# @user_api.route('/logout', methods=['POST'])
+# def logout():
+#     clear_session()
+#     return redirect('/')
 
 
 @user_api.route('/')
@@ -62,14 +62,14 @@ def profile():
     return user_information()
 
 
-def clear_session():
-    print('[LOG] Clear session call')
-    if 'id' in session:
-        session.pop('id')
+# def clear_session():
+#     print('[LOG] Clear session call')
+#     if 'id' in session:
+#         session.pop('id')
 
 
-def check_for_error(message, code=503):
-    if 'error' in message:
-        return abort(make_response(jsonify(message), code))
-    return jsonify(message)
+# def check_for_error(message, code=503):
+#     if 'error' in message:
+#         return abort(make_response(jsonify(message), code))
+#     return jsonify(message)
 
