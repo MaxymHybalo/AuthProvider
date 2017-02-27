@@ -94,7 +94,7 @@ def authorize(*args, **kwargs):
     user = current_session_user()
     print(request)
     if not user:
-        return redirect(url_for('routes_api.login_redirect', returnUrl=client.redirect_uris[0]))
+        return redirect(url_for('service_api.login_redirect', returnUrl=client.redirect_uris[0]))
     if request.method == 'GET':
         kwargs['client'] = client
         kwargs['user'] = user
