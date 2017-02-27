@@ -22,6 +22,8 @@ def _get_token_data(token):
     if token:
         try:
             data = jwt.decode(token, 'key', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            data['verified'] = False
         except jwt.InvalidTokenError:
             data['verified'] = False
     return data
@@ -33,8 +35,12 @@ def generate_access_token(json):
     if 'login' and 'password' in json:
         user = User.query.filter(User.login == json['login']).first()
     if user and user.check_password(json['password']):
-        token = jwt.encode({'login': json['login'], 'verified': True}, key='key', algorithm='HS256')
-        print('Returned ', token.decode('utf-8'))
+        from datetime import datetime, timedelta
+        token = jwt.encode({'login': json['login'],
+                            'verified': True,
+                            'exp': datetime.utcnow() + timedelta(days=1)},
+                           key='key', algorithm='HS256')
+
         return token.decode('utf-8'), None
     token = jwt.encode({'login': json['login'], 'verified': False}, key='key', algorithm='HS256')
     return token.decode('utf-8'), 'Bad user credentials'

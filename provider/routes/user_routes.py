@@ -19,6 +19,11 @@ def register_redirect():
     return render_template('index.html')
 
 
+@user_api.route('/profile')
+def profile_redirect():
+    return render_template('index.html')
+
+
 @user_api.route('/logout', methods=['POST'])
 def logout():
     clear_session()
@@ -33,9 +38,6 @@ def home():
 @user_api.route("/signup/", methods=['POST'])
 def signup():
     response_message = signup_user(request.json)
-    # if 'error' in response_message:
-    #     return abort(make_response(jsonify(response_message), 503))
-    # return jsonify({'message': response_message})
     return check_for_error(response_message)
 
 
