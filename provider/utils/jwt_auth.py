@@ -35,9 +35,9 @@ def generate_access_token(json):
     if user and user.check_password(json['password']):
         token = jwt.encode({'login': json['login'], 'verified': True}, key='key', algorithm='HS256')
         print('Returned ', token.decode('utf-8'))
-        return token.decode('utf-8')
+        return token.decode('utf-8'), None
     token = jwt.encode({'login': json['login'], 'verified': False}, key='key', algorithm='HS256')
-    return token.decode('utf-8')
+    return token.decode('utf-8'), 'Bad user credentials'
 
 
 def session_user(header):

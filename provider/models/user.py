@@ -26,26 +26,24 @@ class User(Base):
             self.first_name = json['firstName']
             self.last_name = json['lastName']
 
-    # @validates('email')
-    # def validate_email(self, key, email):
-    #     assert '@' in email and not User.query.filter(User.email == email).first()
-    #     return email
-    #
-    # @validates('login')
-    # def validate_login(self, key, login):
-    #     # pattern = ''.join(re.findall(r'\w\n', login))
-    #     assert User.query.filter(User.login == login).first()
-    #     return login
-    #
-    @validates('password')
-    def validate_password(self,key, password):
-        assert len(password) < 8
-        return password
+    @validates('email')
+    def validate_email(self, key, email):
+        assert '@' in email
+        assert not User.query.filter(User.email == email).first()
+        return email
 
-    # @validates('phone')
-    # def validate_phone(self, key, phone):
-    #     assert len(phone) != 14
-    #     return phone
+    @validates('login')
+    def validate_login(self, key, login):
+        pattern = ''.join(re.findall(r'\w|\n', login))
+        assert not User.query.filter(User.login == login).first()
+        assert pattern == login
+        return login
+
+    @validates('phone')
+    def validate_phone(self, key, phone):
+        pattern = ''.join(re.findall(r'^[0-9\-\+]{9,15}$', phone))
+        assert pattern == phone
+        return phone
 
     def check_password(self, password):
         from passlib.hash import pbkdf2_sha256
@@ -80,7 +78,7 @@ def signup_user(json):
             submitted = write_user_to_db(user)
             if submitted:
                 return 'User register success'
-            return {'error': 'Some database error'}
+            return {'error': 'Database error, try again'}
         except KeyError:
             return {'error': 'Wrong request data'}
         except AssertionError:
@@ -115,7 +113,7 @@ def update_user(json):
     try:
         db_session.commit()
     except SQLAlchemyError:
-        return 'Server error'
+        return {'error': 'Database error, try again'}
     print('[Logger] user inf. wrote to db')
     return 'Change user information accepted'
 

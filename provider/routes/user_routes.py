@@ -33,28 +33,30 @@ def home():
 @user_api.route("/signup/", methods=['POST'])
 def signup():
     response_message = signup_user(request.json)
-    if 'error' in response_message:
-        return abort(make_response(jsonify(response_message), 503))
-    return jsonify({'message': response_message})
+    # if 'error' in response_message:
+    #     return abort(make_response(jsonify(response_message), 503))
+    # return jsonify({'message': response_message})
+    return check_for_error(response_message)
 
 
 @user_api.route("/auth/", methods=['POST'])
 def authenticate():
-    token = generate_access_token(request.json)
+    token, error = generate_access_token(request.json)
+    if error:
+        return abort(make_response(jsonify(error=error), 503))
     token_id = token_user(token)
     if token_id:
         clear_session()
         print('[LOG] Session call in /auth')
         session['id'] = token_id
     return jsonify({'access_token': token})
-    # return abort(make_response(jsonify(message="Message goes here"), 400))
 
 
 @user_api.route('/api/profile/', methods=['GET', 'PUT'])
 def profile():
     if request.method == 'PUT':
         response_message = update_user(request.json)
-        return jsonify(message=response_message)
+        return check_for_error()
     return user_information()
 
 
@@ -64,4 +66,8 @@ def clear_session():
         session.pop('id')
 
 
+def check_for_error(message, code=503):
+    if 'error' in message:
+        return abort(make_response(jsonify(message), code))
+    return jsonify(message)
 
