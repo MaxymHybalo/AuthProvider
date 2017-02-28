@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request, redirect, render_template, sessio
 
 service_api = Blueprint('service_api', __name__)
 
+from sqlalchemy.orm import sessionmaker
+
 
 @service_api.route('/login')
 def login_redirect():

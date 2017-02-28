@@ -1,6 +1,9 @@
 from flask import request, session
 
 import jwt
+from provider.utils.database import db_session
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import scoped_session
 
 
 def token_expected(f):
@@ -33,7 +36,11 @@ def generate_access_token(json):
     from provider.models.user import User
     user = None
     if 'login' and 'password' in json:
-        user = User.query.filter(User.login == json['login']).first()
+        try:
+            user = User.query.filter(User.login == json['login']).first()
+        except OperationalError:
+            db_session.close()
+            return None, 'Databasse error handling'
     if user and user.check_password(json['password']):
         from datetime import datetime, timedelta
         token = jwt.encode({'login': json['login'],

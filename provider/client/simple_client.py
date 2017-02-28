@@ -3,8 +3,8 @@ from flask_oauthlib.client import OAuth
 
 # Update id and secret if use prodaction base
 
-CLIENT_ID = 'ZFjUZXgpuvuTWZjF074CKiIhoUlqVLqOJj4A74St'
-CLIENT_SECRET = 'lKsUNaG2k0cOB6U7ws72T8OOzRMOv4z7R7bUKCw0EQ46X1poqc'
+CLIENT_ID = '0p5AXnBo3xEfYjfRvs7rIis7rIvymnSAUOsQxoOw'
+CLIENT_SECRET = 'jL43sAeJ7Jg9u3aSaFTIkRjP5PVAQ7MknpU5aFXNpg5K0HyJP5'
 
 
 app = Flask(__name__)
