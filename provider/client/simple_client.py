@@ -12,8 +12,8 @@ app.debug = True
 app.secret_key = 'secret'
 oauth = OAuth(app)
 
-# remote_root_url = 'http://authprovider.herokuapp.com'
-remote_root_url = 'http://127.0.0.1:5000'
+remote_root_url = 'http://authprovider.herokuapp.com'
+# remote_root_url = 'http://127.0.0.1:5000'
 
 remote = oauth.remote_app(
     'remote',

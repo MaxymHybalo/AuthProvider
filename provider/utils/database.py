@@ -6,10 +6,11 @@ mysql_url_localbase = 'mysql+cymysql://root:root@127.0.0.1:3306/auth_provider_de
 
 mysql_deploy = 'mysql+cymysql://b5115c396daeef:4c7e36b8@us-cdbr-iron-east-04.cleardb.net/heroku_33d6128a0e767a7'
 
+db4free_base = 'mysql+cymysql://provider:oauth2@db4free.net/provider_prod'
 sqlite_url = 'sqlite:////dev.db'
 
 
-engine = create_engine(mysql_deploy, encoding='utf-8')
+engine = create_engine(mysql_deploy, encoding='utf-8', pool_recycle=100)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
