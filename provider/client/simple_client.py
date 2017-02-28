@@ -3,8 +3,8 @@ from flask_oauthlib.client import OAuth
 
 # Update id and secret if use prodaction base
 
-CLIENT_ID = '0p5AXnBo3xEfYjfRvs7rIis7rIvymnSAUOsQxoOw'
-CLIENT_SECRET = 'jL43sAeJ7Jg9u3aSaFTIkRjP5PVAQ7MknpU5aFXNpg5K0HyJP5'
+CLIENT_ID = 'XJq61R4zU3bTrbwB777bsAXCxkIcFHnQbfMsbThU'
+CLIENT_SECRET = 'PufjcWK8z3blf4nWrQM7Bsz59YTltSW4M2JQFpneqnyMOEurEK'
 
 
 app = Flask(__name__)
@@ -12,8 +12,8 @@ app.debug = True
 app.secret_key = 'secret'
 oauth = OAuth(app)
 
-remote_root_url = 'http://authprovider.herokuapp.com'
-# remote_root_url = 'http://127.0.0.1:5000'
+# remote_root_url = 'http://authprovider.herokuapp.com'
+remote_root_url = 'http://127.0.0.1:5000'
 
 remote = oauth.remote_app(
     'remote',
@@ -33,7 +33,7 @@ def index():
     if 'remote_oauth' in session:
         resp = remote.get('me')
         return render_template('client.html', email=resp.data['email'], login=resp.data['username'])
-    next_url = request.args.get('next')  or None
+    next_url = request.args.get('next') or None
     print(request.args.get('next'))
     print(request.referrer)
 

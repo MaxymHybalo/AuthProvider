@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import validates
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, InvalidRequestError
 from provider.utils.database import db_session, Base
 from provider.utils.jwt_auth import token_expected
 import re
@@ -138,7 +138,11 @@ def user_information():
 @token_expected
 def current_user(**kwargs):
     if kwargs['verified']:
-        return User.query.filter(User.login == kwargs['login']).first()
+        try:
+            return User.query.filter(User.login == kwargs['login']).first()
+        except InvalidRequestError:
+            db_session.rollback()
+            return None
 
 
 def current_session_user():

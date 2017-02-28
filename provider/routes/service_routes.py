@@ -23,7 +23,7 @@ def profile_redirect():
 @service_api.route('/logout', methods=['POST'])
 def logout():
     clear_session()
-    return redirect('/')
+    return jsonify(message='Success')
 
 
 def clear_session():
